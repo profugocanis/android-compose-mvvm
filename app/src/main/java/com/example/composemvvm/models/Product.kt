@@ -1,6 +1,8 @@
 package com.example.composemvvm.models
 
+import com.google.gson.annotations.SerializedName
+
 data class Product(
-    val name: String? = null,
-    val info: String = "ww&wec"
+    @SerializedName("name") val name: String? = null,
+    @SerializedName("info") val info: String? = null
 )
