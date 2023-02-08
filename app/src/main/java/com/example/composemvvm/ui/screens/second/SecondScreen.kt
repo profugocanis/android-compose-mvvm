@@ -1,11 +1,15 @@
 package com.example.composemvvm.ui.screens.second
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.example.composemvvm.core.BaseScreen
@@ -42,7 +46,11 @@ object SecondScreen : BaseScreen() {
         val product = stackEntry?.getObject<Product>(PRODUCT_KEY)
         val productId = stackEntry?.arguments?.getString(PRODUCT_NAME_KEY)?.toInt()
 
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
             Text(text = "Product id: $productId")
             Text(text = "object: $product")
             Button(onClick = { nav.popBackStack() }) {

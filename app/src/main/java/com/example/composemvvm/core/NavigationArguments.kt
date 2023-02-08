@@ -3,7 +3,6 @@ package com.example.composemvvm.core
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import com.example.composemvvm.logget
 import com.google.gson.Gson
 
 class NavigationArguments {
@@ -36,7 +35,6 @@ class NavigationArguments {
         var parameters = ""
 
         val convertedArgs = convertMap(args)
-        logget(convertedArgs)
 
         val notFilledParam = arguments.firstOrNull { !convertedArgs.keys.contains(it.name) }
         if (notFilledParam != null) {
