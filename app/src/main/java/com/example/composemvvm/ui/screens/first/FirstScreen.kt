@@ -19,8 +19,6 @@ import org.koin.androidx.compose.koinViewModel
 
 object FirstScreen : BaseScreen() {
 
-    const val ROUTE = "ScreenOne"
-
     @Composable
     fun Screen(
         nav: NavController,

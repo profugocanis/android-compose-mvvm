@@ -1,20 +1,36 @@
 package com.example.composemvvm.core
 
 import android.app.Activity
-import android.content.Context
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NavController
 
 abstract class BaseScreen {
 
-    @Composable
-    fun getContext(): Context {
-        return LocalContext.current as Activity
+    private val CLEAR_ROUTE = this::class.simpleName.toString()
+    val ROUTE: String
+        get() {
+            var route = CLEAR_ROUTE
+            val arguments = arguments.getBaseUrl()
+            if (arguments.isNotEmpty()) {
+                route += "?$arguments"
+            }
+            return route
+        }
+
+    open val arguments: NavigationArguments = NavigationArguments()
+
+    fun navigate(nav: NavController, args: Map<String, String> = mapOf()) {
+        val parameters = NavigationArguments.createParameters(args)
+        nav.navigate("$CLEAR_ROUTE?$parameters")
     }
+
+    @Composable
+    fun getContext() = LocalContext.current as Activity
 
     @Composable
     fun onResume(callback: () -> Unit): Boolean {

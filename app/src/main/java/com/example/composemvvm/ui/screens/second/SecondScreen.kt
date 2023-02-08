@@ -8,16 +8,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavController
 import com.example.composemvvm.core.BaseScreen
+import com.example.composemvvm.core.NavigationArguments
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import org.koin.androidx.compose.koinViewModel
 
 object SecondScreen : BaseScreen() {
 
-    const val ROUTE = "ScreenTwo"
+    const val NAME_KEY = "NAME_KEY"
+    const val PRODUCT_KEY = "PRODUCT_KEY"
+
+    override val arguments = NavigationArguments()
+        .registerString(NAME_KEY)
+        .registerString(PRODUCT_KEY)
 
     fun open(nav: NavController, product: Product) {
-        nav.navigate(ROUTE)
+//        product.
+        navigate(nav, mapOf(
+            NAME_KEY to "333",
+            PRODUCT_KEY to "user1234"
+        ))
     }
 
     @Composable

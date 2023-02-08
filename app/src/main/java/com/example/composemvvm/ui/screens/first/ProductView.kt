@@ -11,6 +11,6 @@ import com.example.composemvvm.models.Product
 @Composable
 fun ProductView(product: Product, modifier: Modifier) {
     Box(modifier = modifier) {
-        Text(text = product.name, modifier = Modifier.padding(12.dp))
+        Text(text = product.name.toString(), modifier = Modifier.padding(12.dp))
     }
 }
