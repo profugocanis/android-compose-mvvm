@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import com.example.composemvvm.core.BaseScreen
+import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.core.NavigationArguments
 import com.example.composemvvm.extentions.getObject
 import com.example.composemvvm.models.Product

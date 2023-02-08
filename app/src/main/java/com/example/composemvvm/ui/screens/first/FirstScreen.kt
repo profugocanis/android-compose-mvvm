@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import com.example.composemvvm.core.BaseScreen
 import com.example.composemvvm.core.Source
+import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.showInfoDialog
 import com.example.composemvvm.ui.screens.second.SecondScreen
 import org.koin.androidx.compose.koinViewModel
