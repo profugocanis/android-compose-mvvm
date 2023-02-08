@@ -1,13 +1,21 @@
 package com.example.composemvvm.core
 
 import android.app.Activity
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import com.google.accompanist.navigation.animation.composable
 
 abstract class BaseScreen {
 
@@ -31,6 +39,33 @@ abstract class BaseScreen {
 
     @Composable
     fun getContext() = LocalContext.current as Activity
+
+    @OptIn(ExperimentalAnimationApi::class)
+    fun createComposable(
+        builder: NavGraphBuilder,
+        content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
+    ) {
+        val duration = 300
+        val left = AnimatedContentScope.SlideDirection.Left
+        val right = AnimatedContentScope.SlideDirection.Right
+        return builder.composable(
+            ROUTE,
+            arguments = arguments.getNavigationArguments(),
+            enterTransition = {
+                slideIntoContainer(left, animationSpec = tween(duration))
+            },
+            exitTransition = {
+                slideOutOfContainer(left, animationSpec = tween(duration))
+            },
+            popEnterTransition = {
+                slideIntoContainer(right, animationSpec = tween(duration))
+            },
+            popExitTransition = {
+                slideOutOfContainer(right, animationSpec = tween(duration))
+            },
+            content = content
+        )
+    }
 
     @Composable
     fun onResume(callback: () -> Unit): Boolean {
