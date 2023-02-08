@@ -26,7 +26,7 @@ object SecondScreen : BaseScreen() {
     fun open(nav: NavController, product: Product) {
         val args = mapOf(
             PRODUCT_KEY to product,
-            PRODUCT_NAME_KEY to (product.name ?: "")
+            PRODUCT_NAME_KEY to (product.id ?: -1)
         )
         navigate(nav, args)
     }
@@ -40,9 +40,11 @@ object SecondScreen : BaseScreen() {
 
         val value = rememberSaveable() { mutableStateOf(0) }
         val product = stackEntry?.getObject<Product>(PRODUCT_KEY)
+        val productId = stackEntry?.arguments?.getString(PRODUCT_NAME_KEY)?.toInt()
 
         Column {
-            Text(text = "ScreenTwo, $product")
+            Text(text = "Product id: $productId")
+            Text(text = "object: $product")
             Button(onClick = { nav.popBackStack() }) {
                 Text(text = "Back")
             }

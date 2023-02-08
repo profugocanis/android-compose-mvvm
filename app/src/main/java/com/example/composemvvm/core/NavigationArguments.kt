@@ -36,6 +36,7 @@ class NavigationArguments {
         var parameters = ""
 
         val convertedArgs = convertMap(args)
+        logget(convertedArgs)
 
         val notFilledParam = arguments.firstOrNull { !convertedArgs.keys.contains(it.name) }
         if (notFilledParam != null) {
