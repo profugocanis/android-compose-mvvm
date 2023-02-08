@@ -24,8 +24,8 @@ abstract class BaseScreen {
 
     open val arguments: NavigationArguments = NavigationArguments()
 
-    fun navigate(nav: NavController, args: Map<String, String> = mapOf()) {
-        val parameters = NavigationArguments.createParameters(args)
+    fun navigate(nav: NavController, args: Map<String, Any> = mapOf()) {
+        val parameters = arguments.createParameters(args)
         nav.navigate("$CLEAR_ROUTE?$parameters")
     }
 

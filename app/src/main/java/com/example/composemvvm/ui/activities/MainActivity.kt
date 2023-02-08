@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.composemvvm.logget
 import com.example.composemvvm.ui.screens.first.FirstScreen
 import com.example.composemvvm.ui.screens.second.SecondScreen
 
@@ -23,13 +22,7 @@ class MainActivity : AppCompatActivity() {
                 composable(
                     SecondScreen.ROUTE,
                     arguments = SecondScreen.arguments.getNavigationArguments()
-                ) {
-                    val name = it.arguments?.getString(SecondScreen.NAME_KEY)
-                    val product = it.arguments?.getString(SecondScreen.PRODUCT_KEY)
-                    logget(name)
-                    logget(product)
-                    SecondScreen.Screen(nav)
-                }
+                ) { SecondScreen.Screen(nav, it) }
             }
         }
     }
