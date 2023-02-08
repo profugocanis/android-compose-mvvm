@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.two
+package com.example.composemvvm.ui.screens.second
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
@@ -12,7 +12,7 @@ import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import org.koin.androidx.compose.koinViewModel
 
-object TwoScreen : BaseScreen() {
+object SecondScreen : BaseScreen() {
 
     const val ROUTE = "ScreenTwo"
 
@@ -23,7 +23,7 @@ object TwoScreen : BaseScreen() {
     @Composable
     fun Screen(
         nav: NavController,
-        viewModel: TwoViewModel = koinViewModel()
+        viewModel: SecondViewModel = koinViewModel()
     ) {
 
         onResume {

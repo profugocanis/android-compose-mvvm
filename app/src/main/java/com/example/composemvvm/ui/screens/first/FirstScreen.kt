@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.one
+package com.example.composemvvm.ui.screens.first
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,17 +14,17 @@ import androidx.navigation.NavController
 import com.example.composemvvm.core.BaseScreen
 import com.example.composemvvm.core.Source
 import com.example.composemvvm.extentions.showInfo
-import com.example.composemvvm.ui.screens.two.TwoScreen
+import com.example.composemvvm.ui.screens.second.SecondScreen
 import org.koin.androidx.compose.koinViewModel
 
-object OneScreen : BaseScreen() {
+object FirstScreen : BaseScreen() {
 
     const val ROUTE = "ScreenOne"
 
     @Composable
     fun Screen(
         nav: NavController,
-        viewModel: OneViewModel = koinViewModel()
+        viewModel: FirstViewModel = koinViewModel()
     ) {
 
         val isLoading = rememberSaveable() { mutableStateOf(false) }
@@ -46,7 +46,7 @@ object OneScreen : BaseScreen() {
     }
 
     @Composable
-    fun Content(nav: NavController, viewModel: OneViewModel) {
+    fun Content(nav: NavController, viewModel: FirstViewModel) {
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier
@@ -59,7 +59,7 @@ object OneScreen : BaseScreen() {
                             ProductView(product, modifier = Modifier
                                 .fillParentMaxWidth()
                                 .clickable {
-                                    TwoScreen.open(nav, product)
+                                    SecondScreen.open(nav, product)
                                 })
                         }
                     }

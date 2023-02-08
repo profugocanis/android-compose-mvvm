@@ -1,21 +1,21 @@
 package com.example.composemvvm.di
 
-import com.example.composemvvm.ui.screens.one.OneViewModel
-import com.example.composemvvm.ui.screens.two.TwoViewModel
+import com.example.composemvvm.ui.screens.first.FirstViewModel
+import com.example.composemvvm.ui.screens.second.SecondViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
 
     viewModel {
-        OneViewModel(
+        FirstViewModel(
             application = get(),
             getProductsUseCase = get(),
         )
     }
 
     viewModel {
-        TwoViewModel(
+        SecondViewModel(
             application = get(),
         )
     }

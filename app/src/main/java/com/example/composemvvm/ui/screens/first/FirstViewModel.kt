@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.one
+package com.example.composemvvm.ui.screens.first
 
 import android.app.Application
 import androidx.compose.runtime.getValue
@@ -11,7 +11,7 @@ import com.example.composemvvm.models.Product
 import com.example.composemvvm.usecases.GetProductsUseCase
 import kotlinx.coroutines.launch
 
-class OneViewModel(
+class FirstViewModel(
     application: Application,
     private val getProductsUseCase: GetProductsUseCase
 ) : BaseViewModel(application) {

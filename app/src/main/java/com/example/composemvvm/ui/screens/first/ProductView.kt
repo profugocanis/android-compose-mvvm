@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.one
+package com.example.composemvvm.ui.screens.first
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding

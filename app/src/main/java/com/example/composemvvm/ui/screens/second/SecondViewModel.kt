@@ -1,10 +1,10 @@
-package com.example.composemvvm.ui.screens.two
+package com.example.composemvvm.ui.screens.second
 
 import android.app.Application
 import com.example.composemvvm.core.BaseViewModel
 import com.example.composemvvm.logget
 
-class TwoViewModel(
+class SecondViewModel(
     application: Application
 ) : BaseViewModel(application) {
 

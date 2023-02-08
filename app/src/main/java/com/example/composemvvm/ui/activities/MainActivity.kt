@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.composemvvm.ui.screens.one.OneScreen
-import com.example.composemvvm.ui.screens.two.TwoScreen
+import com.example.composemvvm.ui.screens.first.FirstScreen
+import com.example.composemvvm.ui.screens.second.SecondScreen
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,9 +15,9 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val nav = rememberNavController()
-            NavHost(nav, startDestination = OneScreen.ROUTE) {
-                composable(OneScreen.ROUTE) { OneScreen.Screen(nav) }
-                composable(TwoScreen.ROUTE) { TwoScreen.Screen(nav) }
+            NavHost(nav, startDestination = FirstScreen.ROUTE) {
+                composable(FirstScreen.ROUTE) { FirstScreen.Screen(nav) }
+                composable(SecondScreen.ROUTE) { SecondScreen.Screen(nav) }
             }
         }
     }
