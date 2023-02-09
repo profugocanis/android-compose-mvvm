@@ -12,8 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.core.NavigationArguments
+import com.example.composemvvm.core.ui.BaseScreen
+import com.example.composemvvm.extentions.getInt
 import com.example.composemvvm.extentions.getObject
 import com.example.composemvvm.models.Product
 import org.koin.androidx.compose.koinViewModel
@@ -44,7 +45,7 @@ object SecondScreen : BaseScreen() {
 
         val value = rememberSaveable() { mutableStateOf(0) }
         val product = stackEntry?.getObject<Product>(PRODUCT_KEY)
-        val productId = stackEntry?.arguments?.getString(PRODUCT_NAME_KEY)?.toInt()
+        val productId = stackEntry?.getInt(PRODUCT_NAME_KEY)
 
         Column(
             modifier = Modifier
@@ -52,7 +53,7 @@ object SecondScreen : BaseScreen() {
                 .background(Color.White)
         ) {
             Text(text = "Product id: $productId")
-            Text(text = "object: $product")
+            Text(text = "${value.value}, object: $product")
             Button(onClick = { nav.popBackStack() }) {
                 Text(text = "Back")
             }

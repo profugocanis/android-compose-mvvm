@@ -30,9 +30,8 @@ object FirstScreen : BaseScreen() {
 
             when (viewModel.products) {
                 is Source.Error -> {
-                    getContext().showInfoDialog((viewModel.products as Source.Error).exception.localizedMessage) {
-                        viewModel.load()
-                    }
+                    val message = (viewModel.products as Source.Error).exception.localizedMessage
+                    getContext().showInfoDialog(message) { viewModel.load() }
                 }
                 is Source.Processing -> {
                     CircularProgressIndicator(modifier = Modifier.constrainAs(load) {
@@ -67,7 +66,8 @@ object FirstScreen : BaseScreen() {
                                 .padding(PaddingValues(vertical = 4.dp, horizontal = 8.dp))
                                 .clickable {
                                     SecondScreen.open(nav, product)
-                                })
+                                }
+                        )
                     }
                 }
             }
