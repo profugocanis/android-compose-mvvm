@@ -1,5 +1,8 @@
 package com.example.composemvvm.ui.screens.first
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,6 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -14,6 +20,7 @@ import androidx.navigation.NavController
 import com.example.composemvvm.core.Source
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.showInfoDialog
+import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.screens.second.SecondScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -28,24 +35,33 @@ object FirstScreen : BaseScreen() {
 
             val (load, productList) = createRefs()
 
-            when (viewModel.products) {
-                is Source.Error -> {
-                    val message = (viewModel.products as Source.Error).exception.localizedMessage
-                    getContext().showInfoDialog(message) { viewModel.load() }
-                }
-                is Source.Processing -> {
-                    CircularProgressIndicator(modifier = Modifier.constrainAs(load) {
-                        top.linkTo(parent.top, margin = 16.dp)
-                        bottom.linkTo(parent.bottom, margin = 16.dp)
-                        start.linkTo(parent.start, margin = 16.dp)
-                        end.linkTo(parent.end, margin = 16.dp)
-                    })
-                }
-                is Source.Success -> {
-                    ProductList(nav, viewModel, modifier = Modifier.constrainAs(productList) {
+            val isLoading = remember { mutableStateOf(false) }
 
-                    })
+            HandleProduct(viewModel.products, isLoading)
+
+            AnimatedVisibility(
+                visible = !isLoading.value,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                ProductList(nav, viewModel, modifier = Modifier.constrainAs(productList) {
+
+                })
+            }
+
+            AnimatedVisibility(
+                visible = isLoading.value,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.constrainAs(load) {
+                    top.linkTo(parent.top, margin = 16.dp)
+                    bottom.linkTo(parent.bottom, margin = 16.dp)
+                    start.linkTo(parent.start, margin = 16.dp)
+                    end.linkTo(parent.end, margin = 16.dp)
                 }
+            ) {
+//                Text(text = "loading...")
+                CircularProgressIndicator(strokeWidth = 4.dp)
             }
         }
     }
@@ -71,6 +87,19 @@ object FirstScreen : BaseScreen() {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun HandleProduct(source: Source<List<Product>>, isLoading: MutableState<Boolean>) {
+        when (source) {
+            is Source.Error -> {
+                val message = source.exception.localizedMessage
+                getContext().showInfoDialog(message) { }
+                isLoading.value = false
+            }
+            is Source.Processing -> isLoading.value = true
+            is Source.Success -> isLoading.value = false
         }
     }
 }

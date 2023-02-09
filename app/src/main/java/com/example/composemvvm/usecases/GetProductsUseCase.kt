@@ -8,7 +8,7 @@ import kotlinx.coroutines.delay
 class GetProductsUseCase : BaseUseCase() {
 
     suspend operator fun invoke(): Source<List<Product>> {
-//        delay(1_000)
+        delay(500)
         return Source.Success(
             (0..50).map { Product(id = it, name = "Product $it") }
         )
