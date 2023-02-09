@@ -43,10 +43,9 @@ object FirstScreen : BaseScreen() {
                 visible = !isLoading.value,
                 enter = fadeIn(),
                 exit = fadeOut(),
+                modifier = Modifier.constrainAs(productList) {}
             ) {
-                ProductList(nav, viewModel, modifier = Modifier.constrainAs(productList) {
-
-                })
+                ProductList(nav, viewModel, Modifier)
             }
 
             AnimatedVisibility(
