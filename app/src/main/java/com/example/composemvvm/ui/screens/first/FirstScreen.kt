@@ -1,8 +1,6 @@
 package com.example.composemvvm.ui.screens.first
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +10,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
@@ -32,13 +35,10 @@ object FirstScreen : BaseScreen() {
 
     @Composable
     fun Screen(nav: NavController, viewModel: FirstViewModel = koinViewModel()) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
             val (loadView, productListView, floatingButton) = createRefs()
-
+            val isShowFloating = remember { mutableStateOf(false) }
             val isLoading = remember { mutableStateOf(false) }
             val isRefreshing = rememberSwipeRefreshState(isRefreshing = false)
             val listState = rememberLazyListState()
@@ -52,7 +52,14 @@ object FirstScreen : BaseScreen() {
                 exit = fadeOut(),
                 modifier = Modifier.constrainAs(productListView) {}
             ) {
-                ProductList(nav, viewModel, products, isRefreshing, listState, Modifier)
+                ProductList(
+                    nav,
+                    viewModel,
+                    products,
+                    isRefreshing,
+                    isShowFloating,
+                    listState
+                )
             }
 
             AnimatedVisibility(
@@ -69,19 +76,24 @@ object FirstScreen : BaseScreen() {
                 CircularProgressIndicator(strokeWidth = 4.dp)
             }
 
-            val scope = rememberCoroutineScope()
-
-            FloatingActionButton(
-                onClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(0)
-                    }
-                },
+            AnimatedVisibility(
+                visible = isShowFloating.value,
+                enter = slideInVertically { 300 },
+                exit = slideOutVertically { 300 },
                 modifier = Modifier.constrainAs(floatingButton) {
                     bottom.linkTo(parent.bottom, margin = 16.dp)
                     end.linkTo(parent.end, margin = 16.dp)
-                }) {
-
+                }
+            ) {
+                val scope = rememberCoroutineScope()
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    }) {
+                    Icon(Icons.Filled.KeyboardArrowUp, "menu", tint = Color.White)
+                }
             }
         }
     }
@@ -92,10 +104,9 @@ object FirstScreen : BaseScreen() {
         viewModel: FirstViewModel,
         products: MutableState<List<Product>?>,
         swipeRefreshState: SwipeRefreshState,
+        isShowFloating: MutableState<Boolean>,
         listState: LazyListState,
-        modifier: Modifier
     ) {
-
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = {
@@ -103,14 +114,11 @@ object FirstScreen : BaseScreen() {
                 swipeRefreshState.isRefreshing = true
                 viewModel.load(false)
             },
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(
-                state = listState,
-                modifier = modifier
-            ) {
+            LazyColumn(state = listState) {
                 products.value?.forEach { product ->
+                    isShowFloating.value = listState.firstVisibleItemIndex > 0
                     item() {
                         ProductView(
                             product,
