@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -41,6 +42,11 @@ class ProductBottomDialog : BottomSheetDialogFragment() {
                 )
         ) {
             Text("Dialog", modifier = Modifier.height(300.dp))
+            Button(onClick = {
+                this@ProductBottomDialog.dismiss()
+            }) {
+                Text(text = "Cancel")
+            }
         }
     }
 
