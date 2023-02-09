@@ -9,6 +9,8 @@ import com.example.composemvvm.core.BaseViewModel
 import com.example.composemvvm.core.Source
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.usecases.GetProductsUseCase
+import com.google.accompanist.swiperefresh.SwipeRefreshState
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 class FirstViewModel(
@@ -16,14 +18,17 @@ class FirstViewModel(
     private val getProductsUseCase: GetProductsUseCase
 ) : BaseViewModel(application) {
 
-    var products by mutableStateOf<Source<List<Product>>>(Source.Processing())
+    var products by createSourceMutableState<List<Product>>()
+        private set
 
     init {
         load()
     }
 
-    fun load() {
-        products = Source.Processing()
+    fun load(isProgress: Boolean = true) {
+        if (isProgress) {
+            products = Source.Processing()
+        }
         viewModelScope.launch {
             products = getProductsUseCase()
 //            delay(1_000)

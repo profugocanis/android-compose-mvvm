@@ -1,6 +1,5 @@
 package com.example.composemvvm.ui.screens.first
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,21 +8,24 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.example.composemvvm.core.Source
 import com.example.composemvvm.core.ui.BaseScreen
-import com.example.composemvvm.extentions.showInfoDialog
+import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
-import com.example.composemvvm.ui.dialogs.ProductBottomDialog
 import com.example.composemvvm.ui.screens.second.SecondScreen
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 object FirstScreen : BaseScreen() {
@@ -35,58 +37,88 @@ object FirstScreen : BaseScreen() {
                 .fillMaxSize()
         ) {
 
-            val (load, productList) = createRefs()
+            val (loadView, productListView, floatingButton) = createRefs()
 
             val isLoading = remember { mutableStateOf(false) }
+            val isRefreshing = rememberSwipeRefreshState(isRefreshing = false)
+            val listState = rememberLazyListState()
+            val products = remember { mutableStateOf<List<Product>?>(null) }
 
-            HandleProduct(viewModel.products, isLoading)
+            HandleProducts(viewModel.products, products, isLoading)
 
             AnimatedVisibility(
-                visible = !isLoading.value,
+                visible = products.value != null,
                 enter = fadeIn(),
                 exit = fadeOut(),
-                modifier = Modifier.constrainAs(productList) {}
+                modifier = Modifier.constrainAs(productListView) {}
             ) {
-                ProductList(nav, viewModel, Modifier)
+                ProductList(nav, viewModel, products, isRefreshing, listState, Modifier)
             }
 
             AnimatedVisibility(
                 visible = isLoading.value,
                 enter = fadeIn(),
                 exit = fadeOut(),
-                modifier = Modifier.constrainAs(load) {
+                modifier = Modifier.constrainAs(loadView) {
                     top.linkTo(parent.top, margin = 16.dp)
                     bottom.linkTo(parent.bottom, margin = 16.dp)
                     start.linkTo(parent.start, margin = 16.dp)
                     end.linkTo(parent.end, margin = 16.dp)
                 }
             ) {
-//                Text(text = "loading...")
                 CircularProgressIndicator(strokeWidth = 4.dp)
+            }
+
+            val scope = rememberCoroutineScope()
+
+            FloatingActionButton(
+                onClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                },
+                modifier = Modifier.constrainAs(floatingButton) {
+                    bottom.linkTo(parent.bottom, margin = 16.dp)
+                    end.linkTo(parent.end, margin = 16.dp)
+                }) {
+
             }
         }
     }
 
     @Composable
-    private fun ProductList(nav: NavController, viewModel: FirstViewModel, modifier: Modifier) {
+    private fun ProductList(
+        nav: NavController,
+        viewModel: FirstViewModel,
+        products: MutableState<List<Product>?>,
+        swipeRefreshState: SwipeRefreshState,
+        listState: LazyListState,
+        modifier: Modifier
+    ) {
 
-        val manager = (getContext() as AppCompatActivity).supportFragmentManager
-
-        LazyColumn(
-            modifier = modifier
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = {
+                logget("Refresh")
+                swipeRefreshState.isRefreshing = true
+                viewModel.load(false)
+            },
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            val products = viewModel.products
-            if (products is Source.Success) {
-                products.data?.forEach { product ->
-                    item {
+            LazyColumn(
+                state = listState,
+                modifier = modifier
+            ) {
+                products.value?.forEach { product ->
+                    item() {
                         ProductView(
                             product,
                             modifier = Modifier
                                 .fillParentMaxWidth()
                                 .padding(PaddingValues(vertical = 4.dp, horizontal = 8.dp))
                                 .clickable {
-//                                    SecondScreen.open(nav, product)
-                                    ProductBottomDialog.show(manager)
+                                    SecondScreen.open(nav, product)
                                 }
                         )
                     }
@@ -96,15 +128,21 @@ object FirstScreen : BaseScreen() {
     }
 
     @Composable
-    private fun HandleProduct(source: Source<List<Product>>, isLoading: MutableState<Boolean>) {
+    private fun HandleProducts(
+        source: Source<List<Product>>,
+        products: MutableState<List<Product>?>,
+        isLoading: MutableState<Boolean>
+    ) {
         when (source) {
-            is Source.Error -> {
-                val message = source.exception.localizedMessage
-                getContext().showInfoDialog(message) { }
+            is Source.Processing -> isLoading.value = true
+            is Source.Success -> {
+                products.value = source.data
                 isLoading.value = false
             }
-            is Source.Processing -> isLoading.value = true
-            is Source.Success -> isLoading.value = false
+            is Source.Error -> {
+                ShowError(source.exception)
+                isLoading.value = false
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ class NavigationArguments {
         arguments.add(
             navArgument(key) {
                 type = NavType.StringType
-                defaultValue = ""
+                nullable = true
             }
         )
         return this
