@@ -13,4 +13,9 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="fullScreenBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+    </style>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.composemvvm.ui.screens.first
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,6 +22,7 @@ import com.example.composemvvm.core.Source
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.showInfoDialog
 import com.example.composemvvm.models.Product
+import com.example.composemvvm.ui.dialogs.ProductBottomDialog
 import com.example.composemvvm.ui.screens.second.SecondScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -66,7 +68,10 @@ object FirstScreen : BaseScreen() {
     }
 
     @Composable
-    fun ProductList(nav: NavController, viewModel: FirstViewModel, modifier: Modifier) {
+    private fun ProductList(nav: NavController, viewModel: FirstViewModel, modifier: Modifier) {
+
+        val manager = (getContext() as AppCompatActivity).supportFragmentManager
+
         LazyColumn(
             modifier = modifier
         ) {
@@ -80,7 +85,8 @@ object FirstScreen : BaseScreen() {
                                 .fillParentMaxWidth()
                                 .padding(PaddingValues(vertical = 4.dp, horizontal = 8.dp))
                                 .clickable {
-                                    SecondScreen.open(nav, product)
+//                                    SecondScreen.open(nav, product)
+                                    ProductBottomDialog.show(manager)
                                 }
                         )
                     }
