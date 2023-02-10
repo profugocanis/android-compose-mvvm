@@ -7,10 +7,12 @@ import kotlinx.coroutines.delay
 
 class GetProductsUseCase : BaseUseCase() {
 
-    suspend operator fun invoke(): Source<List<Product>> {
+    private val pageSize = 15
+
+    suspend operator fun invoke(page: Int): Source<List<Product>> {
         delay(500)
         return Source.Success(
-            (0..50).map { Product(id = it, name = "Product $it") }
+            (page * pageSize until page * pageSize + pageSize).map { Product(id = it, name = "Product $it") }
         )
     }
 }

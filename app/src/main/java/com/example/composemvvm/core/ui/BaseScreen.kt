@@ -25,6 +25,16 @@ abstract class BaseScreen : ComposableUtils() {
     }
 
     @Composable
+    fun onDestroy(nav: NavController, callBack: () -> Unit): Boolean {
+        onStop {
+            if (nav.previousBackStackEntry?.destination?.route != ROUTE) {
+                callBack()
+            }
+        }
+        return true
+    }
+
+    @Composable
     fun ShowError(error: Throwable) {
         val message = error.localizedMessage
         getContext().showInfoDialog(message) { }

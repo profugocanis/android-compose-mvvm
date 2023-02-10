@@ -2,19 +2,18 @@ package com.example.composemvvm.ui.screens.first
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -25,45 +24,51 @@ import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.screens.second.SecondScreen
+import com.example.composemvvm.utils.ScrollHelper
 import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshState
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 object FirstScreen : BaseScreen() {
 
+    class ScreenState {
+        var products: MutableSet<Product>? = null
+        val isLoading = mutableStateOf(false)
+        val scroll = ScrollHelper()
+    }
+
+    lateinit var screenState: ScreenState
+
+    fun open(nav: NavController) {
+        screenState = ScreenState()
+        navigate(nav)
+    }
+
     @Composable
     fun Screen(nav: NavController, viewModel: FirstViewModel = koinViewModel()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-            val (loadView, productListView, floatingButton) = createRefs()
-            val isShowFloating = remember { mutableStateOf(false) }
-            val isLoading = remember { mutableStateOf(false) }
-            val isRefreshing = rememberSwipeRefreshState(isRefreshing = false)
-            val listState = rememberLazyListState()
-            val products = remember { mutableStateOf<List<Product>?>(null) }
+            onDestroy(nav = nav) {
+                logget("FirstScreen onDestroy")
+            }
 
-            HandleProducts(viewModel.products, products, isLoading)
+            val (loadView, productListView, floatingButton) = createRefs()
+
+            HandleProducts(viewModel.productsState, viewModel, screenState)
+
+            screenState.scroll.refreshing.isRefreshing = false
 
             AnimatedVisibility(
-                visible = products.value != null,
+                visible = screenState.products != null,
                 enter = fadeIn(),
                 exit = fadeOut(),
                 modifier = Modifier.constrainAs(productListView) {}
             ) {
-                ProductList(
-                    nav,
-                    viewModel,
-                    products,
-                    isRefreshing,
-                    isShowFloating,
-                    listState
-                )
+                ProductList(nav, viewModel, screenState)
             }
 
             AnimatedVisibility(
-                visible = isLoading.value,
+                visible = screenState.isLoading.value,
                 enter = fadeIn(),
                 exit = fadeOut(),
                 modifier = Modifier.constrainAs(loadView) {
@@ -77,7 +82,7 @@ object FirstScreen : BaseScreen() {
             }
 
             AnimatedVisibility(
-                visible = isShowFloating.value,
+                visible = screenState.scroll.isShowFloating.value,
                 enter = slideInVertically { 300 },
                 exit = slideOutVertically { 300 },
                 modifier = Modifier.constrainAs(floatingButton) {
@@ -89,7 +94,7 @@ object FirstScreen : BaseScreen() {
                 FloatingActionButton(
                     onClick = {
                         scope.launch {
-                            listState.animateScrollToItem(0)
+                            screenState.scroll.listState.animateScrollToItem(0)
                         }
                     }) {
                     Icon(Icons.Filled.KeyboardArrowUp, "menu", tint = Color.White)
@@ -102,32 +107,41 @@ object FirstScreen : BaseScreen() {
     private fun ProductList(
         nav: NavController,
         viewModel: FirstViewModel,
-        products: MutableState<List<Product>?>,
-        swipeRefreshState: SwipeRefreshState,
-        isShowFloating: MutableState<Boolean>,
-        listState: LazyListState,
+        screenState: ScreenState
     ) {
         SwipeRefresh(
-            state = swipeRefreshState,
+            state = screenState.scroll.refreshing,
             onRefresh = {
-                logget("Refresh")
-                swipeRefreshState.isRefreshing = true
+                screenState.scroll.refreshing.isRefreshing = true
                 viewModel.load(false)
             },
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(state = listState) {
-                products.value?.forEach { product ->
-                    isShowFloating.value = listState.firstVisibleItemIndex > 0
-                    item() {
-                        ProductView(
-                            product,
-                            modifier = Modifier
-                                .fillParentMaxWidth()
-                                .padding(PaddingValues(vertical = 4.dp, horizontal = 8.dp))
-                                .clickable {
-                                    SecondScreen.open(nav, product)
-                                }
+            LazyColumn(state = screenState.scroll.listState) {
+                items(screenState.products?.toList() ?: listOf(), key = { it.id.toString() }) {
+                    screenState.scroll.updateScroll()
+                    ProductView(
+                        it,
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .padding(PaddingValues(vertical = 4.dp, horizontal = 8.dp))
+                            .clickable {
+                                SecondScreen.open(nav, it)
+                            }
+                    )
+                }
+
+                item {
+                    if (!screenState.scroll.isLastPage.value) {
+                        onResume {
+                            logget("Load more")
+                            viewModel.loadMore()
+                        }
+                        CircularProgressIndicator(
+                            strokeWidth = 2.dp, modifier = Modifier
+                                .size(52.dp)
+                                .padding(4.dp)
+                                .fillMaxWidth()
                         )
                     }
                 }
@@ -138,18 +152,22 @@ object FirstScreen : BaseScreen() {
     @Composable
     private fun HandleProducts(
         source: Source<List<Product>>,
-        products: MutableState<List<Product>?>,
-        isLoading: MutableState<Boolean>
+        viewModel: FirstViewModel,
+        screenState: ScreenState
     ) {
         when (source) {
-            is Source.Processing -> isLoading.value = true
+            is Source.Processing -> screenState.isLoading.value = true
             is Source.Success -> {
-                products.value = source.data
-                isLoading.value = false
+                if (viewModel.page == 0) {
+                    screenState.products = mutableSetOf()
+                }
+                screenState.products?.addAll(source.data ?: listOf())
+                screenState.isLoading.value = false
+                screenState.scroll.isLastPage.value = viewModel.page >= 2
             }
             is Source.Error -> {
                 ShowError(source.exception)
-                isLoading.value = false
+                screenState.isLoading.value = false
             }
         }
     }

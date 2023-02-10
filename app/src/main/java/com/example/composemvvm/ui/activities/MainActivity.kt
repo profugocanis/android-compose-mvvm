@@ -7,6 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import com.example.composemvvm.ui.screens.MainScreen
 import com.example.composemvvm.ui.screens.first.FirstScreen
 import com.example.composemvvm.ui.screens.second.SecondScreen
 import com.example.composemvvm.ui.screens.third.ThirdScreen
@@ -17,7 +18,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @ExperimentalAnimationApi
 class MainActivity : AppCompatActivity() {
 
-    private val startDestination = FirstScreen.ROUTE
+    private val startDestination = MainScreen.ROUTE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +26,8 @@ class MainActivity : AppCompatActivity() {
         setContent {
             Column {
                 val nav = rememberAnimatedNavController()
-                ToolBarView(nav = nav, startDestination)
-                Navigation(nav = nav)
+                ToolBarView(nav, startDestination)
+                Navigation(nav)
             }
         }
     }
@@ -35,6 +36,11 @@ class MainActivity : AppCompatActivity() {
     fun Navigation(nav: NavHostController) {
 
         AnimatedNavHost(nav, startDestination) {
+
+            MainScreen.createComposable(this) {
+                MainScreen.Screen(nav = nav)
+            }
+
             FirstScreen.createComposable(this) {
                 FirstScreen.Screen(nav)
             }

@@ -11,14 +11,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.*
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import com.example.composemvvm.core.NavigationArguments
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.getInt
 import com.example.composemvvm.extentions.getObject
+import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.dialogs.ProductBottomDialog
-import com.example.composemvvm.ui.screens.third.ThirdScreen
 import org.koin.androidx.compose.koinViewModel
 
 object SecondScreen : BaseScreen() {
@@ -49,6 +50,11 @@ object SecondScreen : BaseScreen() {
         val product = stackEntry?.getObject<Product>(PRODUCT_KEY)
         val productId = stackEntry?.getInt(PRODUCT_NAME_KEY)
         val manager = (getContext() as AppCompatActivity).supportFragmentManager
+
+        onDestroy(nav = nav) {
+            logget("SecondScreen onDestroy")
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -63,8 +69,7 @@ object SecondScreen : BaseScreen() {
                 Text(text = "Increase")
             }
             Button(onClick = {
-//                ProductBottomDialog.show(manager)
-                ThirdScreen.open(nav)
+                ProductBottomDialog.show(manager)
             }) {
                 Text(text = "Dialog")
             }
