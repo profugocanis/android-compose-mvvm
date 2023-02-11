@@ -18,7 +18,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @ExperimentalAnimationApi
 class MainActivity : AppCompatActivity() {
 
-    private val startDestination = ChatScreen.ROUTE
+    private val startDestination = ThirdScreen.ROUTE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

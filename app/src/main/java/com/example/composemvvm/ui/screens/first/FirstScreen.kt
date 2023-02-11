@@ -24,6 +24,7 @@ import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.screens.second.SecondScreen
+import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.utils.ScrollHelper
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import kotlinx.coroutines.launch
@@ -66,17 +67,7 @@ object FirstScreen : BaseScreen() {
                 ProductList(nav, viewModel, screenState)
             }
 
-            AnimatedVisibility(visible = screenState.isLoading.value,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier.constrainAs(loadView) {
-                    top.linkTo(parent.top, margin = 16.dp)
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
-                    start.linkTo(parent.start, margin = 16.dp)
-                    end.linkTo(parent.end, margin = 16.dp)
-                }) {
-                CircularProgressIndicator(strokeWidth = 4.dp)
-            }
+            ConstraintLoadView(screenState.isLoading.value, loadView)
 
             AnimatedVisibility(visible = screenState.scroll.isShowFloating.value,
                 enter = slideInVertically { 300 },

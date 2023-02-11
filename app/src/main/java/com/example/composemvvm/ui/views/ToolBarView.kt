@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.composemvvm.extentions.Main
+import com.example.composemvvm.extentions.CustomLightGray
 
 @Composable
 fun ToolBarView(nav: NavHostController, startRoute: String) {
@@ -33,7 +33,7 @@ fun ToolBarView(nav: NavHostController, startRoute: String) {
         Box(
             contentAlignment = Alignment.Center, modifier = Modifier
                 .height(56.dp)
-                .background(Color.Main)
+                .background(Color.CustomLightGray)
         ) {
             val isFirstScreen =
                 stackEntry?.destination != null && stackEntry.destination.route != startRoute

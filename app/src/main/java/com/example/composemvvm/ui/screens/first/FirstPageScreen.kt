@@ -13,13 +13,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.core.ui.PagerItem
-import com.example.composemvvm.extentions.Main
+import com.example.composemvvm.extentions.CustomLightGray
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 object FirstPageScreen : BaseScreen() {
 
@@ -58,7 +57,7 @@ object FirstPageScreen : BaseScreen() {
                         color = MaterialTheme.colors.secondary
                     )
                 },
-                backgroundColor = Color.Main
+                backgroundColor = Color.CustomLightGray
             ) {
                 items.forEachIndexed { index, item ->
                     Tab(
