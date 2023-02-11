@@ -1,5 +1,7 @@
 package com.example.composemvvm.ui.screens.chat
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,11 +12,8 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
@@ -22,6 +21,7 @@ import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.utils.ScrollHelper
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object ChatScreen : BaseScreen() {
@@ -43,18 +43,20 @@ object ChatScreen : BaseScreen() {
         navigate(nav)
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Screen() {
+        CompositionLocalProvider(
+            LocalOverscrollConfiguration provides null,
+        ) {
+            Content()
+        }
+    }
+
+    @Composable
+    fun Content() {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (inputView, messageListView) = createRefs()
-
-//            val scope = rememberCoroutineScope()
-//            onResume {
-//                scope.launch {
-//                    state.scroll.listState.scrollToItem(Int.MAX_VALUE)
-//                }
-//            }
-
             MessageListView(Modifier.constrainAs(messageListView) {
                 bottom.linkTo(inputView.top, margin = 0.dp)
                 top.linkTo(parent.top, margin = 0.dp)
@@ -75,10 +77,13 @@ object ChatScreen : BaseScreen() {
             reverseLayout = true,
             modifier = modifier
         ) {
-            items(screenState.messages.reversed(), key = { it.id }) {
+            items(screenState.messages.reversed(), key = { it.id }) { message ->
                 screenState.scroll.updateScroll()
-                Text(text = it.id, fontSize = 9.sp, color = Color.Gray)
-                Text(text = it.text.toString())
+                if (message.isInput) {
+                    InputMessageView(message)
+                } else {
+                    OutputMessageView(message)
+                }
             }
 
             item {
@@ -111,9 +116,12 @@ object ChatScreen : BaseScreen() {
                 })
 
             Button(onClick = {
-                screenState.messages.add(Message(text.value.text))
+                val messageText = text.value.text.trim()
+                if (messageText.isEmpty()) return@Button
+                screenState.messages.add(Message(messageText, false))
                 text.value = TextFieldValue("")
                 scope.launch {
+                    delay(50)
                     screenState.scroll.listState.animateScrollToItem(0)
                 }
             }) {
