@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +31,7 @@ import org.koin.androidx.compose.koinViewModel
 
 object FirstScreen : BaseScreen() {
 
-    class ScreenState {
+    private class ScreenState {
         var products: MutableSet<Product>? = null
         val isLoading = mutableStateOf(false)
         val scroll = ScrollHelper()
@@ -43,7 +42,9 @@ object FirstScreen : BaseScreen() {
     }
 
     @Composable
-    fun Screen(nav: NavController, viewModel: FirstViewModel = koinViewModel()) {
+    fun Screen(
+        nav: NavController, key: String, viewModel: FirstViewModel = koinViewModel(key = key)
+    ) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
             val screenState = viewModel.rememberScreenState { ScreenState() }
@@ -58,17 +59,14 @@ object FirstScreen : BaseScreen() {
 
             screenState.scroll.refreshing.isRefreshing = false
 
-            AnimatedVisibility(
-                visible = screenState.products != null,
+            AnimatedVisibility(visible = screenState.products != null,
                 enter = fadeIn(),
                 exit = fadeOut(),
-                modifier = Modifier.constrainAs(productListView) {}
-            ) {
+                modifier = Modifier.constrainAs(productListView) {}) {
                 ProductList(nav, viewModel, screenState)
             }
 
-            AnimatedVisibility(
-                visible = screenState.isLoading.value,
+            AnimatedVisibility(visible = screenState.isLoading.value,
                 enter = fadeIn(),
                 exit = fadeOut(),
                 modifier = Modifier.constrainAs(loadView) {
@@ -76,27 +74,23 @@ object FirstScreen : BaseScreen() {
                     bottom.linkTo(parent.bottom, margin = 16.dp)
                     start.linkTo(parent.start, margin = 16.dp)
                     end.linkTo(parent.end, margin = 16.dp)
-                }
-            ) {
+                }) {
                 CircularProgressIndicator(strokeWidth = 4.dp)
             }
 
-            AnimatedVisibility(
-                visible = screenState.scroll.isShowFloating.value,
+            AnimatedVisibility(visible = screenState.scroll.isShowFloating.value,
                 enter = slideInVertically { 300 },
                 exit = slideOutVertically { 300 },
                 modifier = Modifier.constrainAs(floatingButton) {
                     bottom.linkTo(parent.bottom, margin = 16.dp)
                     end.linkTo(parent.end, margin = 16.dp)
-                }
-            ) {
+                }) {
                 val scope = rememberCoroutineScope()
-                FloatingActionButton(
-                    onClick = {
-                        scope.launch {
-                            screenState.scroll.listState.animateScrollToItem(0)
-                        }
-                    }) {
+                FloatingActionButton(onClick = {
+                    scope.launch {
+                        screenState.scroll.listState.animateScrollToItem(0)
+                    }
+                }) {
                     Icon(Icons.Filled.KeyboardArrowUp, "menu", tint = Color.White)
                 }
             }
@@ -105,17 +99,13 @@ object FirstScreen : BaseScreen() {
 
     @Composable
     private fun ProductList(
-        nav: NavController,
-        viewModel: FirstViewModel,
-        screenState: ScreenState
+        nav: NavController, viewModel: FirstViewModel, screenState: ScreenState
     ) {
         SwipeRefresh(
-            state = screenState.scroll.refreshing,
-            onRefresh = {
+            state = screenState.scroll.refreshing, onRefresh = {
                 screenState.scroll.refreshing.isRefreshing = true
                 viewModel.load(false)
-            },
-            modifier = Modifier.fillMaxSize()
+            }, modifier = Modifier.fillMaxSize()
         ) {
             LazyColumn(
                 state = screenState.scroll.listState,
@@ -123,15 +113,13 @@ object FirstScreen : BaseScreen() {
             ) {
                 items(screenState.products?.toList() ?: listOf(), key = { it.id.toString() }) {
                     screenState.scroll.updateScroll()
-                    ProductView(
-                        it,
+                    ProductView(it,
                         modifier = Modifier
                             .fillParentMaxWidth()
                             .padding(PaddingValues(vertical = 8.dp, horizontal = 8.dp))
                             .clickable {
                                 SecondScreen.open(nav, it)
-                            }
-                    )
+                            })
                 }
 
                 item {
@@ -140,8 +128,7 @@ object FirstScreen : BaseScreen() {
                             viewModel.loadMore()
                         }
                         Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
                                 strokeWidth = 2.dp, modifier = Modifier
@@ -157,9 +144,7 @@ object FirstScreen : BaseScreen() {
 
     @Composable
     private fun HandleProducts(
-        source: Source<List<Product>>,
-        viewModel: FirstViewModel,
-        screenState: ScreenState
+        source: Source<List<Product>>, viewModel: FirstViewModel, screenState: ScreenState
     ) {
         when (source) {
             is Source.Processing -> screenState.isLoading.value = true

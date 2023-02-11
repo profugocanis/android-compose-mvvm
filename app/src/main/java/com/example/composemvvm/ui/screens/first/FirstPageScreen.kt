@@ -83,7 +83,7 @@ object FirstPageScreen : BaseScreen() {
             modifier = Modifier.fillMaxSize()
         ) { page ->
             items[page].Page {
-                FirstScreen.Screen(nav = nav, viewModel = koinViewModel(key = it.title))
+                FirstScreen.Screen(nav = nav, key = it.title)
             }
         }
     }
