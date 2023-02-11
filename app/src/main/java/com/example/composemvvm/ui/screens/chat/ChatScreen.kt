@@ -38,7 +38,7 @@ object ChatScreen : BaseScreen() {
     private class ScreenState {
         val isLoading = mutableStateOf(false)
         val scroll = ScrollHelper()
-        val messages = mutableListOf<Message>()
+        val messages = mutableStateListOf<Message>()
     }
 
     fun open(nav: NavController) {
@@ -88,9 +88,7 @@ object ChatScreen : BaseScreen() {
 
     @Composable
     private fun MessageListView(
-        viewModel: ChatViewModel,
-        screenState: ScreenState,
-        modifier: Modifier
+        viewModel: ChatViewModel, screenState: ScreenState, modifier: Modifier
     ) {
         LazyColumn(
             state = screenState.scroll.listState,
@@ -138,28 +136,24 @@ object ChatScreen : BaseScreen() {
                 placeholder = { Text(text = "Enter text") },
                 modifier = Modifier
                     .padding(8.dp)
-                    .fillMaxWidth(), onValueChange = {
+                    .fillMaxWidth(),
+                onValueChange = {
                     text.value = it
                 },
                 trailingIcon = {
-                    Icon(
-                        Icons.Filled.Send,
+                    Icon(Icons.Filled.Send,
                         contentDescription = "",
-                        modifier = Modifier
-                            .clickable(role = Role.Button) {
-                                val messageText = text.value.text.trim()
-                                if (messageText.isEmpty()) return@clickable
-                                screenState.messages.add(0, Message(messageText, false))
-//                                screenState.messages.add
+                        modifier = Modifier.clickable(role = Role.Button) {
+                            val messageText = text.value.text.trim()
+                            if (messageText.isEmpty()) return@clickable
 
-                                screenState.isLoading.value = false
-                                text.value = TextFieldValue("")
-                                scope.launch {
-                                    delay(50)
-                                    screenState.scroll.listState.animateScrollToItem(1)
-                                    screenState.scroll.listState.animateScrollToItem(0)
-                                }
-                            })
+                            screenState.messages.add(0, Message(messageText, false))
+                            text.value = TextFieldValue("")
+                            scope.launch {
+                                delay(50)
+                                screenState.scroll.listState.animateScrollToItem(0)
+                            }
+                        })
                 },
                 shape = CircleShape,
                 colors = TextFieldDefaults.textFieldColors(
@@ -178,10 +172,10 @@ object ChatScreen : BaseScreen() {
         when (source) {
             is Source.Processing -> screenState.isLoading.value = true
             is Source.Success -> {
-
-                screenState.messages.addAll(source.data ?: listOf())
-                logget(screenState.messages.size)
-
+                val list = source.data ?: listOf()
+                if (screenState.messages.firstOrNull { list.contains(it) } == null) {
+                    screenState.messages.addAll(list)
+                }
                 screenState.isLoading.value = false
             }
             is Source.Error -> {
