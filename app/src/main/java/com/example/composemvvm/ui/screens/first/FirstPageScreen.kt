@@ -1,21 +1,18 @@
 package com.example.composemvvm.ui.screens.first
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.composemvvm.core.ui.BaseScreen
+import com.example.composemvvm.core.ui.PagerItem
 import com.example.composemvvm.extentions.Main
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -30,13 +27,8 @@ object FirstPageScreen : BaseScreen() {
         navigate(nav)
     }
 
-    private class ItemRow(val title: String)
-
-    private val items = listOf(ItemRow("Screen 1"), ItemRow("Screen 2"))
-
     @Composable
-    fun Screen(nav: NavHostController, navBackStackEntry: NavBackStackEntry) {
-
+    fun Screen(nav: NavHostController) {
         Column {
             Content(nav)
         }
@@ -48,7 +40,15 @@ object FirstPageScreen : BaseScreen() {
         val pagerState = rememberPagerState()
         val coroutineScope = rememberCoroutineScope()
 
-        Column() {
+        val items = remember {
+            listOf(
+                PagerItem("Page 1"),
+                PagerItem("Page 2"),
+                PagerItem("Page 3"),
+            )
+        }
+
+        Column {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 modifier = Modifier,
@@ -64,15 +64,11 @@ object FirstPageScreen : BaseScreen() {
                     Tab(
                         selected = pagerState.currentPage == index,
                         onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        icon = {
-//                            Icon(imageVector = item.icon, contentDescription = "")
-                        },
                         text = {
                             Text(
                                 text = item.title,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.height(32.dp)
                             )
                         },
                         modifier = Modifier
@@ -86,9 +82,8 @@ object FirstPageScreen : BaseScreen() {
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            when (page) {
-                0 -> FirstScreen.Screen(nav = nav, viewModel = koinViewModel(key = "s1"))
-                1 -> FirstScreen.Screen(nav = nav, viewModel = koinViewModel(key = "s2"))
+            items[page].Page {
+                FirstScreen.Screen(nav = nav, viewModel = koinViewModel(key = it.title))
             }
         }
     }
