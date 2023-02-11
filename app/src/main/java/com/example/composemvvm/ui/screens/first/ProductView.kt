@@ -1,8 +1,8 @@
 package com.example.composemvvm.ui.screens.first
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,7 +11,10 @@ import com.example.composemvvm.models.Product
 
 @Composable
 fun ProductView(product: Product, modifier: Modifier) {
-    Card(modifier = modifier, elevation = 4.dp) {
+    Card(
+        modifier = modifier,
+        elevation = 2.dp
+    ) {
         Text(
             text = product.name.toString(),
             modifier = Modifier

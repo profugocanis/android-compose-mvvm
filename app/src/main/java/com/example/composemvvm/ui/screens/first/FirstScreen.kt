@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -37,16 +38,15 @@ object FirstScreen : BaseScreen() {
         val scroll = ScrollHelper()
     }
 
-    lateinit var screenState: ScreenState
-
     fun open(nav: NavController) {
-        screenState = ScreenState()
         navigate(nav)
     }
 
     @Composable
     fun Screen(nav: NavController, viewModel: FirstViewModel = koinViewModel()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+
+            val screenState = viewModel.rememberScreenState { ScreenState() }
 
             onDestroy(nav = nav) {
                 logget("FirstScreen onDestroy")
@@ -117,14 +117,17 @@ object FirstScreen : BaseScreen() {
             },
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(state = screenState.scroll.listState) {
+            LazyColumn(
+                state = screenState.scroll.listState,
+                contentPadding = PaddingValues(vertical = 4.dp)
+            ) {
                 items(screenState.products?.toList() ?: listOf(), key = { it.id.toString() }) {
                     screenState.scroll.updateScroll()
                     ProductView(
                         it,
                         modifier = Modifier
                             .fillParentMaxWidth()
-                            .padding(PaddingValues(vertical = 4.dp, horizontal = 8.dp))
+                            .padding(PaddingValues(vertical = 8.dp, horizontal = 8.dp))
                             .clickable {
                                 SecondScreen.open(nav, it)
                             }
@@ -134,15 +137,18 @@ object FirstScreen : BaseScreen() {
                 item {
                     if (!screenState.scroll.isLastPage.value) {
                         onResume {
-                            logget("Load more")
                             viewModel.loadMore()
                         }
-                        CircularProgressIndicator(
-                            strokeWidth = 2.dp, modifier = Modifier
-                                .size(52.dp)
-                                .padding(4.dp)
-                                .fillMaxWidth()
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                strokeWidth = 2.dp, modifier = Modifier
+                                    .size(40.dp)
+                                    .padding(8.dp)
+                            )
+                        }
                     }
                 }
             }

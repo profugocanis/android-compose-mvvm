@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.logget
+import com.example.composemvvm.ui.screens.first.FirstPageScreen
 import com.example.composemvvm.ui.screens.first.FirstScreen
 
 object ThirdScreen : BaseScreen() {
@@ -28,7 +29,7 @@ object ThirdScreen : BaseScreen() {
             Text(text = "ThirdScreen")
 
             Button(onClick = {
-                FirstScreen.open(nav)
+                FirstPageScreen.open(nav)
             }) {
                 Text(text = "Products")
             }

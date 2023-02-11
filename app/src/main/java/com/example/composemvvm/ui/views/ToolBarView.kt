@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -19,53 +20,55 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.composemvvm.extentions.Main
 
 @Composable
 fun ToolBarView(nav: NavHostController, startRoute: String) {
-    val stackEntry = nav.currentBackStackEntryFlow
-        .collectAsState(initial = null)
-        .value
+    val stackEntry = nav.currentBackStackEntryFlow.collectAsState(initial = null).value
 
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
         modifier = Modifier
-            .height(56.dp)
             .fillMaxWidth()
-            .background(Color.Gray)
     ) {
-        val isFirstScreen =
-            stackEntry?.destination != null && stackEntry.destination.route != startRoute
-
         Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterStart
+            contentAlignment = Alignment.Center, modifier = Modifier
+                .height(56.dp)
+                .background(Color.Main)
         ) {
-            AnimatedVisibility(
-                visible = isFirstScreen,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier
-            ) {
-                Icon(Icons.Filled.KeyboardArrowLeft, "menu", modifier = Modifier
-                    .padding(12.dp)
-                    .size(32.dp)
-                    .clickable {
-                        if (nav.previousBackStackEntry != null) {
-                            nav.popBackStack()
-                        }
-                    },
-                    tint = Color.Blue
-                )
-            }
-        }
+            val isFirstScreen =
+                stackEntry?.destination != null && stackEntry.destination.route != startRoute
 
-        Text(
-            text = "${stackEntry?.destination?.displayName}",
-            fontSize = 18.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 32.dp)
-        )
+            Box(
+                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
+            ) {
+                this@Column.AnimatedVisibility(
+                    visible = isFirstScreen, enter = fadeIn(), exit = fadeOut(), modifier = Modifier
+                ) {
+                    Icon(
+                        Icons.Filled.KeyboardArrowLeft,
+                        "menu",
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .size(32.dp)
+                            .clickable {
+                                if (nav.previousBackStackEntry != null) {
+                                    nav.popBackStack()
+                                }
+                            },
+                        tint = Color.Blue
+                    )
+                }
+            }
+
+            Text(
+                text = "${stackEntry?.destination?.displayName}",
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 32.dp)
+            )
+        }
+        Divider()
     }
 }
