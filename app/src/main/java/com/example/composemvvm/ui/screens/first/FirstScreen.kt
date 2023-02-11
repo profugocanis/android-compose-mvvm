@@ -1,6 +1,7 @@
 package com.example.composemvvm.ui.screens.first
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,7 +47,7 @@ object FirstScreen : BaseScreen() {
     fun Screen(
         nav: NavController, key: String, viewModel: FirstViewModel = koinViewModel(key = key)
     ) {
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
 
             val screenState = viewModel.rememberScreenState { ScreenState() }
 

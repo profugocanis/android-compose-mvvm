@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.first.FirstPageScreen
@@ -25,30 +27,37 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             Column {
+                val title = remember { mutableStateOf("") }
                 val nav = rememberAnimatedNavController()
-                ToolBarView(nav, startDestination)
-                Navigation(nav)
+                ToolBarView(nav, startDestination, title.value)
+                Navigation(nav) {
+                    title.value = it
+                }
             }
         }
     }
 
     @Composable
-    fun Navigation(nav: NavHostController) {
+    fun Navigation(nav: NavHostController, onTitle: (String) -> Unit) {
 
         AnimatedNavHost(nav, startDestination) {
             FirstPageScreen.createComposable(this) {
+                onTitle("FirstPageScreen")
                 FirstPageScreen.Screen(nav)
             }
 
             SecondScreen.createComposable(this) {
+                onTitle("SecondScreen")
                 SecondScreen.Screen(nav, it)
             }
 
             ThirdScreen.createComposable(this) {
+                onTitle("ThirdScreen")
                 ThirdScreen.Screen(nav)
             }
 
             ChatScreen.createComposable(this) {
+                onTitle("ChatScreen")
                 ChatScreen.Screen()
             }
         }

@@ -7,9 +7,11 @@ import kotlinx.coroutines.delay
 
 class GetMessageListUseCase : BaseUseCase() {
 
-    suspend operator fun invoke(): Source<List<Message>> {
+    private val pageSize = 20
+
+    suspend operator fun invoke(page: Int): Source<List<Message>> {
         delay(500)
-        val messages = (0..50).map { Message("Message $it") }
+        val messages = (page * pageSize until page * pageSize + pageSize).map { Message("Message $it") }
         return Source.Success(messages)
     }
 }

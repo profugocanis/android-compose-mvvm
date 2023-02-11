@@ -18,14 +18,24 @@ class ChatViewModel(
     var messagesState by createSourceMutableState<List<Message>>()
         private set
 
+    private var page = 0
+
     init {
         load()
     }
 
     private fun load() {
         messagesState = Source.Processing()
+        page = 0
         viewModelScope.launch {
-            messagesState = getMessageListUseCase()
+            messagesState = getMessageListUseCase(page)
+        }
+    }
+
+    fun loadMore() {
+        page++
+        viewModelScope.launch {
+            messagesState = getMessageListUseCase(page)
         }
     }
 }

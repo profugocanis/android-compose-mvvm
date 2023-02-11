@@ -2,6 +2,7 @@ package com.example.composemvvm.ui.screens.chat
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,10 +38,8 @@ object ChatScreen : BaseScreen() {
     private class ScreenState {
         val isLoading = mutableStateOf(false)
         val scroll = ScrollHelper()
-        var messages = mutableStateListOf<Message>()
+        val messages = mutableListOf<Message>()
     }
-
-    private val screenState = ScreenState()
 
     fun open(nav: NavController) {
         navigate(nav)
@@ -50,29 +49,35 @@ object ChatScreen : BaseScreen() {
     @Composable
     fun Screen(viewModel: ChatViewModel = koinViewModel()) {
 
-        HandleMessages(viewModel.messagesState)
+        val screenState = viewModel.rememberScreenState { ScreenState() }
+
+        HandleMessages(viewModel.messagesState, screenState)
 
         CompositionLocalProvider(
             LocalOverscrollConfiguration provides null,
         ) {
-            Content()
+            Content(viewModel, screenState)
         }
     }
 
     @Composable
-    fun Content() {
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    private fun Content(viewModel: ChatViewModel, screenState: ScreenState) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
             val (inputView, messageListView, loadView) = createRefs()
 
             if (!screenState.isLoading.value) {
-                MessageListView(Modifier.constrainAs(messageListView) {
+                MessageListView(viewModel, screenState, Modifier.constrainAs(messageListView) {
                     bottom.linkTo(inputView.top, margin = 0.dp)
                     top.linkTo(parent.top, margin = 0.dp)
                     height = Dimension.fillToConstraints
                     width = Dimension.matchParent
                 })
 
-                InputView(modifier = Modifier.constrainAs(inputView) {
+                InputView(screenState, modifier = Modifier.constrainAs(inputView) {
                     bottom.linkTo(parent.bottom, margin = 0.dp)
                 })
             }
@@ -82,14 +87,18 @@ object ChatScreen : BaseScreen() {
     }
 
     @Composable
-    private fun MessageListView(modifier: Modifier) {
+    private fun MessageListView(
+        viewModel: ChatViewModel,
+        screenState: ScreenState,
+        modifier: Modifier
+    ) {
         LazyColumn(
             state = screenState.scroll.listState,
             contentPadding = PaddingValues(vertical = 4.dp),
             reverseLayout = true,
             modifier = modifier
         ) {
-            items(screenState.messages.reversed(), key = { it.id }) { message ->
+            items(screenState.messages.toList(), key = { it.id }) { message ->
                 screenState.scroll.updateScroll()
                 if (message.isInput) {
                     InputMessageView(message)
@@ -101,6 +110,7 @@ object ChatScreen : BaseScreen() {
             item {
                 onResume {
                     logget("Load more")
+                    viewModel.loadMore()
                 }
                 Box(
                     modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
@@ -116,19 +126,19 @@ object ChatScreen : BaseScreen() {
     }
 
     @Composable
-    private fun InputView(modifier: Modifier) {
+    private fun InputView(screenState: ScreenState, modifier: Modifier) {
         val text = remember { mutableStateOf(TextFieldValue("")) }
         val scope = rememberCoroutineScope()
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
+        Column(modifier = modifier.fillMaxWidth()) {
+            Divider()
+
             TextField(
                 value = text.value,
                 maxLines = 3,
                 placeholder = { Text(text = "Enter text") },
-                modifier = Modifier.fillMaxWidth(), onValueChange = {
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(), onValueChange = {
                     text.value = it
                 },
                 trailingIcon = {
@@ -139,10 +149,14 @@ object ChatScreen : BaseScreen() {
                             .clickable(role = Role.Button) {
                                 val messageText = text.value.text.trim()
                                 if (messageText.isEmpty()) return@clickable
-                                screenState.messages.add(Message(messageText, false))
+                                screenState.messages.add(0, Message(messageText, false))
+//                                screenState.messages.add
+
+                                screenState.isLoading.value = false
                                 text.value = TextFieldValue("")
                                 scope.launch {
                                     delay(50)
+                                    screenState.scroll.listState.animateScrollToItem(1)
                                     screenState.scroll.listState.animateScrollToItem(0)
                                 }
                             })
@@ -160,11 +174,14 @@ object ChatScreen : BaseScreen() {
     }
 
     @Composable
-    private fun HandleMessages(source: Source<List<Message>>) {
+    private fun HandleMessages(source: Source<List<Message>>, screenState: ScreenState) {
         when (source) {
             is Source.Processing -> screenState.isLoading.value = true
             is Source.Success -> {
+
                 screenState.messages.addAll(source.data ?: listOf())
+                logget(screenState.messages.size)
+
                 screenState.isLoading.value = false
             }
             is Source.Error -> {

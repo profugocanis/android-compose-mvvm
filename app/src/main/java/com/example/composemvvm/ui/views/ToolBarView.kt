@@ -23,7 +23,7 @@ import androidx.navigation.NavHostController
 import com.example.composemvvm.extentions.CustomLightGray
 
 @Composable
-fun ToolBarView(nav: NavHostController, startRoute: String) {
+fun ToolBarView(nav: NavHostController, startRoute: String, title: String) {
     val stackEntry = nav.currentBackStackEntryFlow.collectAsState(initial = null).value
 
     Column(
@@ -61,7 +61,7 @@ fun ToolBarView(nav: NavHostController, startRoute: String) {
             }
 
             Text(
-                text = "${stackEntry?.destination?.displayName}",
+                text = title,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier

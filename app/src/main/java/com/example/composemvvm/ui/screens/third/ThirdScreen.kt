@@ -1,13 +1,16 @@
 package com.example.composemvvm.ui.screens.third
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.example.composemvvm.core.ui.BaseScreen
+import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.logget
 import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.first.FirstPageScreen
@@ -26,7 +29,7 @@ object ThirdScreen : BaseScreen() {
             logget("ThirdScreen onDestroy")
         }
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().background(Color.CustomBlue)) {
             Text(text = "ThirdScreen")
 
             Button(onClick = {
