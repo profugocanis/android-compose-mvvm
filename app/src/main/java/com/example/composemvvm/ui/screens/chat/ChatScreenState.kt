@@ -7,6 +7,7 @@ import com.example.composemvvm.utils.ScrollHelper
 
 class ChatScreenState {
     val isLoading = mutableStateOf(false)
+    val isLastPage = mutableStateOf(false)
     val scroll = ScrollHelper()
     val messages = mutableStateListOf<Message>()
 
@@ -24,7 +25,7 @@ class ChatScreenState {
 
     fun updateMessage(message: Message) {
         val index = messages.indexOfFirst { it.id == message.id }
-        if (index != -1) {
+        if (index != -1 && message != messages[index]) {
             messages.removeAt(index)
             messages.add(index, message)
         }

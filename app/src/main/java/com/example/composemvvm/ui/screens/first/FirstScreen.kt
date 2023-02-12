@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import com.example.composemvvm.core.Source
+import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product

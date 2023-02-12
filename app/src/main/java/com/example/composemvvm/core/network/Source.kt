@@ -1,4 +1,4 @@
-package com.example.composemvvm.core
+package com.example.composemvvm.core.network
 
 sealed class Source<out DATA : Any> {
     data class Processing(val msg: String? = null) : Source<Nothing>()

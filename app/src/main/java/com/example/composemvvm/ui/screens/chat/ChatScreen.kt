@@ -1,5 +1,7 @@
 package com.example.composemvvm.ui.screens.chat
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
-import com.example.composemvvm.core.Source
+import com.example.composemvvm.core.network.PaginationSource
+import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
@@ -41,6 +45,7 @@ object ChatScreen : BaseScreen() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Screen(viewModel: ChatViewModel = koinViewModel()) {
+        logget("ChatScreen update")
 
         val screenState = viewModel.rememberScreenState { ChatScreenState() }
 
@@ -61,7 +66,7 @@ object ChatScreen : BaseScreen() {
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            val (inputView, messageListView, loadView) = createRefs()
+            val (inputView, messageListView, loadView, floatingButton) = createRefs()
 
             if (!screenState.isLoading.value) {
                 MessageListView(viewModel, screenState, Modifier.constrainAs(messageListView) {
@@ -69,6 +74,11 @@ object ChatScreen : BaseScreen() {
                     top.linkTo(parent.top, margin = 0.dp)
                     height = Dimension.fillToConstraints
                     width = Dimension.matchParent
+                })
+
+                ButtonScrollStart(screenState, Modifier.constrainAs(floatingButton) {
+                    bottom.linkTo(inputView.top, margin = 16.dp)
+                    end.linkTo(parent.end, margin = 16.dp)
                 })
 
                 InputView(viewModel, screenState, modifier = Modifier.constrainAs(inputView) {
@@ -97,27 +107,27 @@ object ChatScreen : BaseScreen() {
                     message = message,
                     message.isInput,
                     modifier = Modifier.animateItemPlacement(),
-                    menuItems = listOf(
-                        PopMenuItem("Delete") {
-                            removeMessage(message, screenState)
-                        }
-                    )
+                    menuItems = listOf(PopMenuItem("Delete") {
+                        removeMessage(message, screenState)
+                    })
                 )
             }
 
-            item {
-                onResume {
-                    logget("Load more")
-                    viewModel.loadMore()
-                }
-                Box(
-                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        strokeWidth = 2.dp, modifier = Modifier
-                            .size(40.dp)
-                            .padding(8.dp)
-                    )
+            if (!screenState.isLastPage.value) {
+                item {
+                    onResume {
+                        logget("Load more")
+                        viewModel.loadMore()
+                    }
+                    Box(
+                        modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            strokeWidth = 2.dp, modifier = Modifier
+                                .size(40.dp)
+                                .padding(8.dp)
+                        )
+                    }
                 }
             }
         }
@@ -125,9 +135,7 @@ object ChatScreen : BaseScreen() {
 
     @Composable
     private fun InputView(
-        viewModel: ChatViewModel,
-        screenState: ChatScreenState,
-        modifier: Modifier
+        viewModel: ChatViewModel, screenState: ChatScreenState, modifier: Modifier
     ) {
         val text = remember { mutableStateOf(TextFieldValue("")) }
         val scope = rememberCoroutineScope()
@@ -162,11 +170,32 @@ object ChatScreen : BaseScreen() {
         }
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
+    @Composable
+    private fun ButtonScrollStart(screenState: ChatScreenState, modifier: Modifier) {
+        AnimatedVisibility(
+            visible = screenState.scroll.isShowFloating.value,
+            enter = scaleIn(animationSpec = tween(300)),
+            exit = scaleOut(animationSpec = tween(300)),
+            modifier = modifier
+        ) {
+            val scope = rememberCoroutineScope()
+            FloatingActionButton(
+                onClick = {
+                    scope.launch {
+                        screenState.scroll.listState.animateScrollToItem(0)
+                    }
+                },
+                backgroundColor = Color.CustomBlue,
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(Icons.Filled.KeyboardArrowDown, "menu", tint = Color.White)
+            }
+        }
+    }
+
     private fun sendMessage(
-        text: String,
-        screenState: ChatScreenState,
-        viewModel: ChatViewModel,
-        scope: CoroutineScope
+        text: String, screenState: ChatScreenState, viewModel: ChatViewModel, scope: CoroutineScope
     ) {
         if (text.isEmpty()) return
         val message = Message(text = text, isSend = false, isInput = false)
@@ -183,11 +212,15 @@ object ChatScreen : BaseScreen() {
     }
 
     @Composable
-    private fun HandleMessages(source: Source<List<Message>>, screenState: ChatScreenState) {
+    private fun HandleMessages(
+        source: Source<PaginationSource<Message>>,
+        screenState: ChatScreenState
+    ) {
         when (source) {
             is Source.Processing -> screenState.isLoading.value = true
             is Source.Success -> {
-                screenState.addMessages(source.data ?: listOf())
+                screenState.addMessages(source.data?.list ?: listOf())
+                screenState.isLastPage.value = source.data?.isLastPage ?: true
                 screenState.isLoading.value = false
             }
             is Source.Error -> {
@@ -201,9 +234,7 @@ object ChatScreen : BaseScreen() {
     private fun HandleUpdateMessage(source: Source<Message>, screenState: ChatScreenState) {
         when (source) {
             is Source.Processing -> Unit
-            is Source.Success -> {
-                source.data?.let { screenState.updateMessage(it) }
-            }
+            is Source.Success -> source.data?.let { screenState.updateMessage(it) }
             is Source.Error -> {
                 ShowError(source.exception)
             }

@@ -5,7 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseViewModel
-import com.example.composemvvm.core.Source
+import com.example.composemvvm.core.network.PaginationSource
+import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.usecases.GetMessageListUseCase
 import com.example.composemvvm.usecases.SendMessageUseCase
@@ -17,7 +18,7 @@ class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
 ) : BaseViewModel(application) {
 
-    var messagesState by createSourceMutableState<List<Message>>()
+    var messagesState by createSourceMutableState<PaginationSource<Message>>()
         private set
 
     var updatedMessageState by createSourceMutableState<Message>()

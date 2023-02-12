@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseViewModel
-import com.example.composemvvm.core.Source
+import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.usecases.GetProductsUseCase
