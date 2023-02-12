@@ -8,14 +8,19 @@ import com.example.composemvvm.core.BaseViewModel
 import com.example.composemvvm.core.Source
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.usecases.GetMessageListUseCase
+import com.example.composemvvm.usecases.SendMessageUseCase
 import kotlinx.coroutines.launch
 
 class ChatViewModel(
     application: Application,
-    private val getMessageListUseCase: GetMessageListUseCase
+    private val getMessageListUseCase: GetMessageListUseCase,
+    private val sendMessageUseCase: SendMessageUseCase,
 ) : BaseViewModel(application) {
 
     var messagesState by createSourceMutableState<List<Message>>()
+        private set
+
+    var updatedMessageState by createSourceMutableState<Message>()
         private set
 
     private var page = 0
@@ -36,6 +41,12 @@ class ChatViewModel(
         page++
         viewModelScope.launch {
             messagesState = getMessageListUseCase(page)
+        }
+    }
+
+    fun sendMessage(message: Message) {
+        viewModelScope.launch {
+            updatedMessageState = sendMessageUseCase(message)
         }
     }
 }

@@ -24,23 +24,15 @@ import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
-import com.example.composemvvm.ui.screens.chat.views.CustomPopMenu
-import com.example.composemvvm.ui.screens.chat.views.InputMessageView
-import com.example.composemvvm.ui.screens.chat.views.OutputMessageView
-import com.example.composemvvm.ui.screens.chat.views.PopMenuItem
+import com.example.composemvvm.ui.screens.chat.views.*
 import com.example.composemvvm.ui.views.ConstraintLoadView
-import com.example.composemvvm.utils.ScrollHelper
+import com.example.composemvvm.ui.views.PopMenuItem
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 object ChatScreen : BaseScreen() {
-
-    private class ScreenState {
-        val isLoading = mutableStateOf(false)
-        val scroll = ScrollHelper()
-        val messages = mutableStateListOf<Message>()
-    }
 
     fun open(nav: NavController) {
         navigate(nav)
@@ -50,9 +42,10 @@ object ChatScreen : BaseScreen() {
     @Composable
     fun Screen(viewModel: ChatViewModel = koinViewModel()) {
 
-        val screenState = viewModel.rememberScreenState { ScreenState() }
+        val screenState = viewModel.rememberScreenState { ChatScreenState() }
 
         HandleMessages(viewModel.messagesState, screenState)
+        HandleUpdateMessage(viewModel.updatedMessageState, screenState)
 
         CompositionLocalProvider(
             LocalOverscrollConfiguration provides null,
@@ -62,7 +55,7 @@ object ChatScreen : BaseScreen() {
     }
 
     @Composable
-    private fun Content(viewModel: ChatViewModel, screenState: ScreenState) {
+    private fun Content(viewModel: ChatViewModel, screenState: ChatScreenState) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,7 +71,7 @@ object ChatScreen : BaseScreen() {
                     width = Dimension.matchParent
                 })
 
-                InputView(screenState, modifier = Modifier.constrainAs(inputView) {
+                InputView(viewModel, screenState, modifier = Modifier.constrainAs(inputView) {
                     bottom.linkTo(parent.bottom, margin = 0.dp)
                 })
             }
@@ -87,9 +80,10 @@ object ChatScreen : BaseScreen() {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun MessageListView(
-        viewModel: ChatViewModel, screenState: ScreenState, modifier: Modifier
+        viewModel: ChatViewModel, screenState: ChatScreenState, modifier: Modifier
     ) {
         LazyColumn(
             state = screenState.scroll.listState,
@@ -99,26 +93,16 @@ object ChatScreen : BaseScreen() {
         ) {
             items(screenState.messages.toList(), key = { it.id }) { message ->
                 screenState.scroll.updateScroll()
-                val menuItems = remember {
-                    listOf(PopMenuItem("Delete") {
-                        logget("del ${message.id}")
-                    })
-                }
-                if (message.isInput) {
-                    CustomPopMenu(menuItems) { expanded ->
-                        InputMessageView(message, onLongClick = {
-                            logget(message.id)
-                            expanded.value = true
-                        })
-                    }
-                } else {
-                    CustomPopMenu(menuItems) { expanded ->
-                        OutputMessageView(message, onLongClick = {
-                            logget(message.id)
-                            expanded.value = true
-                        })
-                    }
-                }
+                MessageView(
+                    message = message,
+                    message.isInput,
+                    modifier = Modifier.animateItemPlacement(),
+                    menuItems = listOf(
+                        PopMenuItem("Delete") {
+                            removeMessage(message, screenState)
+                        }
+                    )
+                )
             }
 
             item {
@@ -140,7 +124,11 @@ object ChatScreen : BaseScreen() {
     }
 
     @Composable
-    private fun InputView(screenState: ScreenState, modifier: Modifier) {
+    private fun InputView(
+        viewModel: ChatViewModel,
+        screenState: ChatScreenState,
+        modifier: Modifier
+    ) {
         val text = remember { mutableStateOf(TextFieldValue("")) }
         val scope = rememberCoroutineScope()
         Column(modifier = modifier.fillMaxWidth()) {
@@ -153,22 +141,13 @@ object ChatScreen : BaseScreen() {
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
-                onValueChange = {
-                    text.value = it
-                },
+                onValueChange = { text.value = it },
                 trailingIcon = {
                     Icon(Icons.Filled.Send,
                         contentDescription = "",
                         modifier = Modifier.clickable(role = Role.Button) {
-                            val messageText = text.value.text.trim()
-                            if (messageText.isEmpty()) return@clickable
-
-                            screenState.messages.add(0, Message(messageText, false))
+                            sendMessage(text.value.text.trim(), screenState, viewModel, scope)
                             text.value = TextFieldValue("")
-                            scope.launch {
-                                delay(50)
-                                screenState.scroll.listState.animateScrollToItem(0)
-                            }
                         })
                 },
                 shape = CircleShape,
@@ -183,20 +162,50 @@ object ChatScreen : BaseScreen() {
         }
     }
 
+    private fun sendMessage(
+        text: String,
+        screenState: ChatScreenState,
+        viewModel: ChatViewModel,
+        scope: CoroutineScope
+    ) {
+        if (text.isEmpty()) return
+        val message = Message(text = text, isSend = false, isInput = false)
+        screenState.addMessages(message)
+        viewModel.sendMessage(message)
+        scope.launch {
+            delay(50)
+            screenState.scroll.listState.animateScrollToItem(0)
+        }
+    }
+
+    private fun removeMessage(message: Message, screenState: ChatScreenState) {
+        screenState.messages.remove(message)
+    }
+
     @Composable
-    private fun HandleMessages(source: Source<List<Message>>, screenState: ScreenState) {
+    private fun HandleMessages(source: Source<List<Message>>, screenState: ChatScreenState) {
         when (source) {
             is Source.Processing -> screenState.isLoading.value = true
             is Source.Success -> {
-                val list = source.data ?: listOf()
-                if (screenState.messages.firstOrNull { list.contains(it) } == null) {
-                    screenState.messages.addAll(list)
-                }
+                screenState.addMessages(source.data ?: listOf())
                 screenState.isLoading.value = false
             }
             is Source.Error -> {
                 ShowError(source.exception)
                 screenState.isLoading.value = false
+            }
+        }
+    }
+
+    @Composable
+    private fun HandleUpdateMessage(source: Source<Message>, screenState: ChatScreenState) {
+        when (source) {
+            is Source.Processing -> Unit
+            is Source.Success -> {
+                source.data?.let { screenState.updateMessage(it) }
+            }
+            is Source.Error -> {
+                ShowError(source.exception)
             }
         }
     }

@@ -24,7 +24,8 @@ val viewModelModule = module {
     viewModel {
         ChatViewModel(
             application = get(),
-            getMessageListUseCase = get()
+            getMessageListUseCase = get(),
+            sendMessageUseCase = get()
         )
     }
 }
