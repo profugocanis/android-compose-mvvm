@@ -24,8 +24,10 @@ import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
+import com.example.composemvvm.ui.screens.chat.views.CustomPopMenu
 import com.example.composemvvm.ui.screens.chat.views.InputMessageView
 import com.example.composemvvm.ui.screens.chat.views.OutputMessageView
+import com.example.composemvvm.ui.screens.chat.views.PopMenuItem
 import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.utils.ScrollHelper
 import kotlinx.coroutines.delay
@@ -70,11 +72,11 @@ object ChatScreen : BaseScreen() {
 
             if (!screenState.isLoading.value) {
                 MessageListView(viewModel, screenState, Modifier.constrainAs(messageListView) {
-                        bottom.linkTo(inputView.top, margin = 0.dp)
-                        top.linkTo(parent.top, margin = 0.dp)
-                        height = Dimension.fillToConstraints
-                        width = Dimension.matchParent
-                    })
+                    bottom.linkTo(inputView.top, margin = 0.dp)
+                    top.linkTo(parent.top, margin = 0.dp)
+                    height = Dimension.fillToConstraints
+                    width = Dimension.matchParent
+                })
 
                 InputView(screenState, modifier = Modifier.constrainAs(inputView) {
                     bottom.linkTo(parent.bottom, margin = 0.dp)
@@ -97,14 +99,25 @@ object ChatScreen : BaseScreen() {
         ) {
             items(screenState.messages.toList(), key = { it.id }) { message ->
                 screenState.scroll.updateScroll()
+                val menuItems = remember {
+                    listOf(PopMenuItem("Delete") {
+                        logget("del ${message.id}")
+                    })
+                }
                 if (message.isInput) {
-                    InputMessageView(message, onLongClick = {
-                        logget(message.id)
-                    })
+                    CustomPopMenu(menuItems) { expanded ->
+                        InputMessageView(message, onLongClick = {
+                            logget(message.id)
+                            expanded.value = true
+                        })
+                    }
                 } else {
-                    OutputMessageView(message, onLongClick = {
-                        logget(message.id)
-                    })
+                    CustomPopMenu(menuItems) { expanded ->
+                        OutputMessageView(message, onLongClick = {
+                            logget(message.id)
+                            expanded.value = true
+                        })
+                    }
                 }
             }
 
