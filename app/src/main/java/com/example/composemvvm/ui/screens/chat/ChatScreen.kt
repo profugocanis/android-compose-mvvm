@@ -10,10 +10,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.TextFieldValue
@@ -28,6 +30,7 @@ import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
+import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.views.*
 import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.ui.views.PopMenuItem
@@ -136,6 +139,7 @@ object ChatScreen : BaseScreen() {
         }
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     private fun InputView(
         viewModel: ChatViewModel, screenState: ChatScreenState, modifier: Modifier
@@ -160,6 +164,12 @@ object ChatScreen : BaseScreen() {
                             sendMessage(text.value.text.trim(), screenState, viewModel, scope)
                             text.value = TextFieldValue("")
                         })
+                }, leadingIcon = {
+                    Icon(Icons.Filled.Person,
+                        contentDescription = "",
+                        modifier = Modifier.clickable(role = Role.Button) {
+                            MainActivity.imageHelper?.select()
+                        }.clipToBounds())
                 },
                 shape = CircleShape,
                 colors = TextFieldDefaults.textFieldColors(

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
+import com.example.composemvvm.core.image.ImageHelper
 import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.first.FirstPageScreen
 import com.example.composemvvm.ui.screens.second.SecondScreen
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        imageHelper = ImageHelper(this)
         setContent {
             Column {
                 val title = remember { mutableStateOf("") }
@@ -61,5 +62,9 @@ class MainActivity : AppCompatActivity() {
                 ChatScreen.Screen()
             }
         }
+    }
+
+    companion object {
+        var imageHelper: ImageHelper? = null
     }
 }

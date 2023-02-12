@@ -1,20 +1,20 @@
 package com.example.composemvvm.core.ui
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavController
-import com.example.composemvvm.logget
-import com.example.composemvvm.ui.screens.first.FirstScreen
 
 abstract class ComposableUtils {
 
     @Composable
-    fun getContext() = LocalContext.current as Activity
+    fun getContext() = LocalContext.current
+
+    @Composable
+    fun getActivity() = LocalContext.current as AppCompatActivity
 
     @Composable
     fun onResume(callback: () -> Unit): Boolean {
