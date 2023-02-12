@@ -102,7 +102,8 @@ object ChatScreen : BaseScreen() {
             modifier = modifier
         ) {
             items(screenState.messages.toList(), key = { it.id }) { message ->
-                screenState.scroll.updateScroll()
+                screenState.scroll.updateScroll(3)
+
                 MessageView(
                     message = message,
                     message.isInput,
@@ -111,6 +112,8 @@ object ChatScreen : BaseScreen() {
                         removeMessage(message, screenState)
                     })
                 )
+
+                DateView(message, screenState.messages)
             }
 
             if (!screenState.isLastPage.value) {
@@ -175,8 +178,8 @@ object ChatScreen : BaseScreen() {
     private fun ButtonScrollStart(screenState: ChatScreenState, modifier: Modifier) {
         AnimatedVisibility(
             visible = screenState.scroll.isShowFloating.value,
-            enter = scaleIn(animationSpec = tween(300)),
-            exit = scaleOut(animationSpec = tween(300)),
+            enter = scaleIn(animationSpec = tween(200)),
+            exit = scaleOut(animationSpec = tween(200)),
             modifier = modifier
         ) {
             val scope = rememberCoroutineScope()
@@ -185,9 +188,7 @@ object ChatScreen : BaseScreen() {
                     scope.launch {
                         screenState.scroll.listState.animateScrollToItem(0)
                     }
-                },
-                backgroundColor = Color.CustomBlue,
-                modifier = Modifier.size(40.dp)
+                }, backgroundColor = Color.CustomBlue, modifier = Modifier.size(40.dp)
             ) {
                 Icon(Icons.Filled.KeyboardArrowDown, "menu", tint = Color.White)
             }
@@ -213,8 +214,7 @@ object ChatScreen : BaseScreen() {
 
     @Composable
     private fun HandleMessages(
-        source: Source<PaginationSource<Message>>,
-        screenState: ChatScreenState
+        source: Source<PaginationSource<Message>>, screenState: ChatScreenState
     ) {
         when (source) {
             is Source.Processing -> screenState.isLoading.value = true

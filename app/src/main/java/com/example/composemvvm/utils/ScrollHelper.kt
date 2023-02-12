@@ -11,7 +11,7 @@ class ScrollHelper {
     val refreshing = SwipeRefreshState(isRefreshing = false)
     val listState = LazyListState()
 
-    fun updateScroll() {
-        isShowFloating.value = listState.firstVisibleItemIndex > 0
+    fun updateScroll(visibleItem: Int = 0) {
+        isShowFloating.value = listState.firstVisibleItemIndex > visibleItem
     }
 }

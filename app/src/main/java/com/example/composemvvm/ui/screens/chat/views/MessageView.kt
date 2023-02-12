@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,10 +25,7 @@ import com.example.composemvvm.ui.views.PopMenuItem
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MessageView(
-    message: Message,
-    isInput: Boolean,
-    modifier: Modifier,
-    menuItems: List<PopMenuItem>
+    message: Message, isInput: Boolean, modifier: Modifier, menuItems: List<PopMenuItem>
 ) {
     val radius = 16.dp
     val shape = if (isInput) {
@@ -49,19 +47,19 @@ fun MessageView(
             Row(
                 modifier = Modifier
                     .clip(shape)
-                    .combinedClickable(
-                        onClick = { },
-                        onLongClick = { expanded.value = true }
-                    )
+                    .combinedClickable(onClick = { }, onLongClick = { expanded.value = true })
                     .background(backgroundColor)
                     .padding(horizontal = 4.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
+                val screenWidthDp = LocalConfiguration.current.screenWidthDp.div(1.5)
                 Text(
                     text = message.text.toString(),
                     color = Color.White,
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .widthIn(max = screenWidthDp.dp)
                 )
                 Text(
                     text = "13:32",
