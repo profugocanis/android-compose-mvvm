@@ -1,6 +1,8 @@
-package com.example.composemvvm.ui.screens.chat
+package com.example.composemvvm.ui.screens.chat.views
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -11,11 +13,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.models.Message
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OutputMessageView(message: Message) {
+fun OutputMessageView(message: Message, onLongClick: () -> Unit) {
     val radius = 16.dp
     val shape = RoundedCornerShape(topStart = radius, topEnd = radius, bottomStart = radius)
     Box(
@@ -27,6 +29,10 @@ fun OutputMessageView(message: Message) {
         Row(
             modifier = Modifier
                 .clip(shape)
+                .combinedClickable(
+                    onClick = { },
+                    onLongClick = onLongClick
+                )
                 .background(Color.Gray)
                 .padding(horizontal = 4.dp, vertical = 8.dp),
             verticalAlignment = Alignment.Bottom

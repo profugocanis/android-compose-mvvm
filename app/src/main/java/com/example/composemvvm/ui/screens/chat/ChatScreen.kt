@@ -1,9 +1,6 @@
 package com.example.composemvvm.ui.screens.chat
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalOverscrollConfiguration
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +24,8 @@ import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
+import com.example.composemvvm.ui.screens.chat.views.InputMessageView
+import com.example.composemvvm.ui.screens.chat.views.OutputMessageView
 import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.utils.ScrollHelper
 import kotlinx.coroutines.delay
@@ -71,11 +70,11 @@ object ChatScreen : BaseScreen() {
 
             if (!screenState.isLoading.value) {
                 MessageListView(viewModel, screenState, Modifier.constrainAs(messageListView) {
-                    bottom.linkTo(inputView.top, margin = 0.dp)
-                    top.linkTo(parent.top, margin = 0.dp)
-                    height = Dimension.fillToConstraints
-                    width = Dimension.matchParent
-                })
+                        bottom.linkTo(inputView.top, margin = 0.dp)
+                        top.linkTo(parent.top, margin = 0.dp)
+                        height = Dimension.fillToConstraints
+                        width = Dimension.matchParent
+                    })
 
                 InputView(screenState, modifier = Modifier.constrainAs(inputView) {
                     bottom.linkTo(parent.bottom, margin = 0.dp)
@@ -99,9 +98,13 @@ object ChatScreen : BaseScreen() {
             items(screenState.messages.toList(), key = { it.id }) { message ->
                 screenState.scroll.updateScroll()
                 if (message.isInput) {
-                    InputMessageView(message)
+                    InputMessageView(message, onLongClick = {
+                        logget(message.id)
+                    })
                 } else {
-                    OutputMessageView(message)
+                    OutputMessageView(message, onLongClick = {
+                        logget(message.id)
+                    })
                 }
             }
 
