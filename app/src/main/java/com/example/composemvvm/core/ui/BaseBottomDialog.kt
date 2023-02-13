@@ -43,12 +43,22 @@ abstract class BaseBottomDialog : BottomSheetDialogFragment() {
         return dialog
     }
 
+    private var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>? = null
+
+    var isDraggable = true
+        set(value) {
+            field = value
+            bottomSheetBehavior?.isDraggable = value
+        }
+
+
     private fun setupBottomSheet(dialogInterface: DialogInterface) {
         val bottomSheetDialog = dialogInterface as BottomSheetDialog
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout
         bottomSheet.setBackgroundColor(Color.TRANSPARENT)
 
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
         val behaviour = BottomSheetBehavior.from(bottomSheet)
         behaviour.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {

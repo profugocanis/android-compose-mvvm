@@ -1,17 +1,16 @@
 package com.example.composemvvm.ui.dialogs
 
-import android.content.Context
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.fragment.app.FragmentManager
 import coil.compose.rememberAsyncImagePainter
 import com.example.composemvvm.core.ui.BaseBottomDialog
+import com.example.composemvvm.ui.views.ZoomableImage
 
 class ImageViewerDialog : BaseBottomDialog() {
 
@@ -19,40 +18,25 @@ class ImageViewerDialog : BaseBottomDialog() {
 
     @Composable
     override fun DialogContent() {
-        val isShowBackground = remember { mutableStateOf(false) }
-        setOnSlideOffset {
-            isShowBackground.value = it == 1f
-        }
-        ImageViewerView(isShowBackground)
+        ImageViewerView()
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun ImageViewerView(isShowBackground: MutableState<Boolean>) {
-        Box {
-//            AnimatedVisibility(
-//                visible = isShowBackground.value,
-//                enter = fadeIn(animationSpec = tween(durationMillis = 50)),
-//                exit = fadeOut(animationSpec = tween(durationMillis = 50)),
-//            ) {
-//                Spacer(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(Color.Black)
-//                )
-//            }
-            Image(
-                painter = rememberAsyncImagePainter(url),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-//            contentScale = ContentScale.Crop
-            )
+    private fun ImageViewerView() {
+        ZoomableImage(
+            painter = rememberAsyncImagePainter(url),
+            isRotation = false,
+            modifier = Modifier.fillMaxSize(),
+            backgroundColor = Color.Black
+        ) {
+            isDraggable = it == 1f
         }
     }
 
     companion object {
 
-        fun show(manager: FragmentManager, url: String?, context: Context) {
+        fun show(manager: FragmentManager, url: String?) {
             val dialog = ImageViewerDialog()
             dialog.url = url
             dialog.isCancelable = true
