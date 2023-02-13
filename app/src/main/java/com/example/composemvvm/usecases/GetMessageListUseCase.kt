@@ -15,7 +15,7 @@ class GetMessageListUseCase : BaseUseCase() {
     suspend operator fun invoke(page: Int): Source<PaginationSource<Message>> {
         delay(500)
 
-        val messages = listOf(
+        val messages = mutableListOf(
             Message(
                 data = MessageData.Text("You need to sort dates, not strings. Also, have you heared about DateFormat? It makes all that appends for you."),
                 isInput = false,
@@ -43,17 +43,18 @@ class GetMessageListUseCase : BaseUseCase() {
             )
         )
 
+        if (page > 0) {
+            messages.clear()
+        }
+
+        var randomMessages =
+            (page * pageLimit until page * pageLimit + pageLimit).map { Message(MessageData.Text("Message $it")) }
+        if (page >= 1)
+            randomMessages = randomMessages.reversed().takeLast(pageLimit / 10)
+
+        messages.addAll(randomMessages)
         return Source.Success(
             PaginationSource(list = messages, pageSize = messages.size, pageLimit = pageLimit)
         )
-
-//        var messages =
-//            (page * pageLimit until page * pageLimit + pageLimit).map { Message("Message $it") }
-//        if (page >= 1)
-//            messages = messages.reversed().takeLast(pageLimit / 10)
-//
-//        return Source.Success(
-//            PaginationSource(list = messages, pageSize = messages.size, pageLimit = pageLimit)
-//        )
     }
 }

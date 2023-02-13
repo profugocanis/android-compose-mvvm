@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -27,11 +28,11 @@ import com.example.composemvvm.ui.views.CustomPopMenu
 import com.example.composemvvm.ui.views.PopMenuItem
 
 @Composable
-fun ImageMessageView(message: Message, menuItems: List<PopMenuItem>) {
+fun ImageMessageView(message: Message, menuItems: List<PopMenuItem>, modifier: Modifier) {
     val isInput = message.isInput
     val alignment = if (isInput) Alignment.TopStart else Alignment.TopEnd
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp, horizontal = 4.dp),
         contentAlignment = alignment
@@ -45,7 +46,6 @@ fun ImageMessageView(message: Message, menuItems: List<PopMenuItem>) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
-    val url = message.getData<MessageData.Image>().url
     val isInput = message.isInput
     val radius = 16.dp
     val shape = if (isInput) {
@@ -60,6 +60,7 @@ fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
             .clip(shape)
             .border(BorderStroke(1.dp, backgroundColor), shape)
             .combinedClickable(onClick = {
+                val url = message.getData<MessageData.Image>().url
                 ImageViewerDialog.show(manager, url)
             }, onLongClick = onLongClick)
             .background(backgroundColor)
@@ -67,13 +68,24 @@ fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
         contentAlignment = Alignment.BottomEnd
     ) {
         val screenWidthDp = LocalConfiguration.current.screenWidthDp.div(1.8)
-        Image(
-            painter = rememberAsyncImagePainter(url),
-            contentDescription = null,
-            modifier = Modifier
-                .size(screenWidthDp.dp),
-            contentScale = ContentScale.Crop
-        )
+
+        val imageData = message.getData<MessageData.Image>()
+        var painter: Painter? = null
+        if (imageData.url != null) {
+            painter = rememberAsyncImagePainter(imageData.url)
+        } else if (imageData.bitmap != null) {
+            painter = rememberAsyncImagePainter(imageData.bitmap)
+        }
+
+        if (painter != null) {
+            Image(
+                painter = painter,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(screenWidthDp.dp),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         val padding = if (isInput) 8.dp else 4.dp
         Row(

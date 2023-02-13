@@ -1,5 +1,6 @@
 package com.example.composemvvm.ui.screens.chat
 
+import android.graphics.Bitmap
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
@@ -10,12 +11,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -37,9 +36,6 @@ import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.views.*
 import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.ui.views.PopMenuItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 object ChatScreen : BaseScreen() {
@@ -53,7 +49,8 @@ object ChatScreen : BaseScreen() {
     fun Screen(viewModel: ChatViewModel = koinViewModel()) {
         logget("ChatScreen update")
 
-        val screenState = viewModel.rememberScreenState { ChatScreenState() }
+        val scope = rememberCoroutineScope()
+        val screenState = viewModel.rememberScreenState { ChatScreenState(scope) }
 
         HandleMessages(viewModel.messagesState, screenState)
         HandleUpdateMessage(viewModel.updatedMessageState, screenState)
@@ -117,7 +114,8 @@ object ChatScreen : BaseScreen() {
                 when (message.data) {
                     is MessageData.Image -> ImageMessageView(
                         message = message,
-                        menuItems = menuItems
+                        modifier = Modifier.animateItemPlacement(),
+                        menuItems = menuItems,
                     )
                     is MessageData.Text -> TextMessageView(
                         message = message,
@@ -127,7 +125,7 @@ object ChatScreen : BaseScreen() {
                     null -> {}
                 }
 
-                DateView(message, screenState.messages)
+                DateView(message, screenState.messages, Modifier.animateItemPlacement())
             }
 
             if (!screenState.isLastPage.value) {
@@ -156,7 +154,6 @@ object ChatScreen : BaseScreen() {
         viewModel: ChatViewModel, screenState: ChatScreenState, modifier: Modifier
     ) {
         val text = remember { mutableStateOf(TextFieldValue("")) }
-        val scope = rememberCoroutineScope()
         Column(modifier = modifier.fillMaxWidth()) {
             Divider()
 
@@ -172,7 +169,7 @@ object ChatScreen : BaseScreen() {
                     Icon(Icons.Filled.Send,
                         contentDescription = "",
                         modifier = Modifier.clickable(role = Role.Button) {
-                            sendMessage(text.value.text.trim(), screenState, viewModel, scope)
+                            sendMessage(text.value.text.trim(), screenState, viewModel)
                             text.value = TextFieldValue("")
                         })
                 },
@@ -182,7 +179,9 @@ object ChatScreen : BaseScreen() {
                         contentDescription = "",
                         modifier = Modifier
                             .clickable(role = Role.Button) {
-                                activity?.imageHelper?.select()
+                                activity?.imageHelper?.select {
+                                    sendImage(it, screenState, viewModel)
+                                }
                             })
                 },
                 shape = CircleShape,
@@ -207,12 +206,9 @@ object ChatScreen : BaseScreen() {
             exit = scaleOut(animationSpec = tween(200)),
             modifier = modifier
         ) {
-            val scope = rememberCoroutineScope()
             FloatingActionButton(
                 onClick = {
-                    scope.launch {
-                        screenState.scroll.listState.animateScrollToItem(0)
-                    }
+                    screenState.scrollToBottom()
                 }, backgroundColor = Color.CustomBlue, modifier = Modifier.size(40.dp)
             ) {
                 Icon(Icons.Filled.KeyboardArrowDown, "menu", tint = Color.White)
@@ -221,16 +217,19 @@ object ChatScreen : BaseScreen() {
     }
 
     private fun sendMessage(
-        text: String, screenState: ChatScreenState, viewModel: ChatViewModel, scope: CoroutineScope
+        text: String, screenState: ChatScreenState, viewModel: ChatViewModel
     ) {
         if (text.isEmpty()) return
         val message = Message(data = MessageData.Text(text), isSend = false, isInput = false)
         screenState.addMessages(message)
         viewModel.sendMessage(message)
-        scope.launch {
-            delay(50)
-            screenState.scroll.listState.animateScrollToItem(0)
-        }
+    }
+
+    private fun sendImage(bitmap: Bitmap?, screenState: ChatScreenState, viewModel: ChatViewModel) {
+        val messageData = MessageData.Image(bitmap = bitmap)
+        val message = Message(data = messageData, isSend = false, isInput = false)
+        screenState.addMessages(message)
+        viewModel.sendMessage(message)
     }
 
     private fun removeMessage(message: Message, screenState: ChatScreenState) {

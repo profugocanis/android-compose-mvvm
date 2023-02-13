@@ -16,25 +16,25 @@ import java.util.*
 val simpleDateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
 
 @Composable
-fun DateView(message: Message, messages: List<Message>) {
+fun DateView(message: Message, messages: List<Message>, modifier: Modifier) {
 
     val index = messages.indexOf(message)
     if (index == messages.size - 1) {
-        DrawDate(message.date)
+        DrawDate(message.date, modifier)
     }
 
     if (index < messages.size - 1) {
         val previousDate = simpleDateFormat.format(messages[index + 1].date)
         val date = simpleDateFormat.format(message.date)
         if (date != previousDate) {
-            DrawDate(message.date)
+            DrawDate(message.date, modifier)
         }
     }
 }
 
 @Composable
-private fun DrawDate(date: Date) {
-    Box(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), contentAlignment = Alignment.Center) {
+private fun DrawDate(date: Date, modifier: Modifier) {
+    Box(modifier = modifier.fillMaxWidth().padding(vertical = 4.dp), contentAlignment = Alignment.Center) {
         Text(text = isToday(date), color = Color.Gray)
     }
 }
