@@ -19,14 +19,18 @@ import androidx.compose.ui.unit.sp
 import com.example.composemvvm.R
 import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.models.Message
+import com.example.composemvvm.models.MessageData
 import com.example.composemvvm.ui.views.CustomPopMenu
 import com.example.composemvvm.ui.views.PopMenuItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MessageView(
-    message: Message, isInput: Boolean, modifier: Modifier, menuItems: List<PopMenuItem>
+fun TextMessageView(
+    message: Message,
+    modifier: Modifier,
+    menuItems: List<PopMenuItem>
 ) {
+    val isInput = message.isInput
     val radius = 16.dp
     val shape = if (isInput) {
         RoundedCornerShape(topStart = radius, topEnd = radius, bottomEnd = radius)
@@ -54,7 +58,7 @@ fun MessageView(
             ) {
                 val screenWidthDp = LocalConfiguration.current.screenWidthDp.div(1.5)
                 Text(
-                    text = message.text.toString(),
+                    text = message.getData<MessageData.Text>().text.toString(),
                     color = Color.White,
                     fontSize = 16.sp,
                     modifier = Modifier

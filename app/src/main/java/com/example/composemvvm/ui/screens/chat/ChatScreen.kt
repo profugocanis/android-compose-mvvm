@@ -17,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
+import com.example.composemvvm.R
 import com.example.composemvvm.core.network.PaginationSource
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
@@ -30,6 +32,7 @@ import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
+import com.example.composemvvm.models.MessageData
 import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.views.*
 import com.example.composemvvm.ui.views.ConstraintLoadView
@@ -107,14 +110,22 @@ object ChatScreen : BaseScreen() {
             items(screenState.messages.toList(), key = { it.id }) { message ->
                 screenState.scroll.updateScroll(3)
 
-                MessageView(
-                    message = message,
-                    message.isInput,
-                    modifier = Modifier.animateItemPlacement(),
-                    menuItems = listOf(PopMenuItem("Delete") {
-                        removeMessage(message, screenState)
-                    })
-                )
+                val menuItems = listOf(PopMenuItem("Delete") {
+                    removeMessage(message, screenState)
+                })
+
+                when (message.data) {
+                    is MessageData.Image -> ImageMessageView(
+                        message = message,
+                        menuItems = menuItems
+                    )
+                    is MessageData.Text -> TextMessageView(
+                        message = message,
+                        modifier = Modifier.animateItemPlacement(),
+                        menuItems = menuItems
+                    )
+                    null -> {}
+                }
 
                 DateView(message, screenState.messages)
             }
@@ -164,15 +175,19 @@ object ChatScreen : BaseScreen() {
                             sendMessage(text.value.text.trim(), screenState, viewModel, scope)
                             text.value = TextFieldValue("")
                         })
-                }, leadingIcon = {
-                    Icon(Icons.Filled.Person,
+                },
+                leadingIcon = {
+                    val activity = getActivity() as? MainActivity
+                    Icon(painter = painterResource(id = R.drawable.ic_image),
                         contentDescription = "",
-                        modifier = Modifier.clickable(role = Role.Button) {
-                            MainActivity.imageHelper?.select()
-                        }.clipToBounds())
+                        modifier = Modifier
+                            .clickable(role = Role.Button) {
+                                activity?.imageHelper?.select()
+                            })
                 },
                 shape = CircleShape,
                 colors = TextFieldDefaults.textFieldColors(
+                    leadingIconColor = Color.CustomBlue,
                     trailingIconColor = Color.CustomBlue,
                     backgroundColor = Color.CustomLightGray,
                     focusedIndicatorColor = Color.Transparent,
@@ -209,7 +224,7 @@ object ChatScreen : BaseScreen() {
         text: String, screenState: ChatScreenState, viewModel: ChatViewModel, scope: CoroutineScope
     ) {
         if (text.isEmpty()) return
-        val message = Message(text = text, isSend = false, isInput = false)
+        val message = Message(data = MessageData.Text(text), isSend = false, isInput = false)
         screenState.addMessages(message)
         viewModel.sendMessage(message)
         scope.launch {

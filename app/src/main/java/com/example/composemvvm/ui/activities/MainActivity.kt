@@ -23,9 +23,11 @@ class MainActivity : AppCompatActivity() {
 
     private val startDestination = ChatScreen.ROUTE
 
+    val imageHelper: ImageHelper = ImageHelper(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        imageHelper = ImageHelper(this)
+//        imageHelper = ImageHelper(this)
         setContent {
             Column {
                 val title = remember { mutableStateOf("") }
@@ -62,9 +64,5 @@ class MainActivity : AppCompatActivity() {
                 ChatScreen.Screen()
             }
         }
-    }
-
-    companion object {
-        var imageHelper: ImageHelper? = null
     }
 }
