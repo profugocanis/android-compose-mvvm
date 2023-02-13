@@ -1,5 +1,6 @@
 package com.example.composemvvm.ui.screens.chat.views
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,9 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -22,6 +21,8 @@ import com.example.composemvvm.R
 import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.models.MessageData
+import com.example.composemvvm.ui.dialogs.ImageViewerDialog
+import com.example.composemvvm.ui.screens.second.SecondScreen
 import com.example.composemvvm.ui.views.CustomPopMenu
 import com.example.composemvvm.ui.views.PopMenuItem
 
@@ -53,11 +54,14 @@ fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
         RoundedCornerShape(topStart = radius, topEnd = radius, bottomStart = radius)
     }
     val backgroundColor = if (isInput) Color.CustomBlue else Color.Gray
+    val manager = (SecondScreen.getContext() as AppCompatActivity).supportFragmentManager
     Box(
         modifier = Modifier
             .clip(shape)
             .border(BorderStroke(1.dp, backgroundColor), shape)
-            .combinedClickable(onClick = { }, onLongClick = onLongClick)
+            .combinedClickable(onClick = {
+                ImageViewerDialog.show(manager, url)
+            }, onLongClick = onLongClick)
             .background(backgroundColor)
             .padding(horizontal = 0.dp, vertical = 0.dp),
         contentAlignment = Alignment.BottomEnd
