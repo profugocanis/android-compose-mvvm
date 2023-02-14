@@ -22,6 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
+import com.example.composemvvm.core.ui.ScreenState
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.screens.second.SecondScreen
@@ -33,7 +34,8 @@ import org.koin.androidx.compose.koinViewModel
 
 object FirstScreen : BaseScreen() {
 
-    private class ScreenState {
+    private class FirstScreenState: ScreenState {
+
         var products: MutableSet<Product>? = null
         val isLoading = mutableStateOf(false)
         val scroll = ScrollHelper()
@@ -49,7 +51,7 @@ object FirstScreen : BaseScreen() {
     ) {
         ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
 
-            val screenState = viewModel.rememberScreenState { ScreenState() }
+            val screenState = viewModel.rememberScreenState { FirstScreenState() }
 
             onDestroy(nav = nav) {
                 logget("FirstScreen onDestroy")
@@ -91,7 +93,7 @@ object FirstScreen : BaseScreen() {
 
     @Composable
     private fun ProductList(
-        nav: NavController, viewModel: FirstViewModel, screenState: ScreenState
+        nav: NavController, viewModel: FirstViewModel, screenState: FirstScreenState
     ) {
         SwipeRefresh(
             state = screenState.scroll.refreshing, onRefresh = {
@@ -136,7 +138,7 @@ object FirstScreen : BaseScreen() {
 
     @Composable
     private fun HandleProducts(
-        source: Source<List<Product>>, viewModel: FirstViewModel, screenState: ScreenState
+        source: Source<List<Product>>, viewModel: FirstViewModel, screenState: FirstScreenState
     ) {
         when (source) {
             is Source.Processing -> screenState.isLoading.value = true

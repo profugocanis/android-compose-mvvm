@@ -7,12 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.AndroidViewModel
 import com.example.composemvvm.core.network.Source
+import com.example.composemvvm.core.ui.ScreenState
 
 abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var screenState: Any? = null
+    private var screenState: ScreenState? = null
 
-    fun <T> rememberScreenState(creator: @DisallowComposableCalls () -> T): T {
+    fun <T : ScreenState> rememberScreenState(creator: @DisallowComposableCalls () -> T): T {
         if (screenState == null) {
             screenState = creator()
         }

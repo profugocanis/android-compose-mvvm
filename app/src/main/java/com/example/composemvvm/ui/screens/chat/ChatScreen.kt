@@ -1,7 +1,6 @@
 package com.example.composemvvm.ui.screens.chat
 
 import android.graphics.Bitmap
-import android.view.View
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
@@ -17,14 +16,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.core.view.allViews
 import androidx.navigation.NavController
 import com.example.composemvvm.R
 import com.example.composemvvm.core.network.PaginationSource
@@ -32,6 +28,7 @@ import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
+import com.example.composemvvm.extentions.onBounceClick
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.models.MessageData
@@ -39,8 +36,7 @@ import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.views.*
 import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.ui.views.PopMenuItem
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.composemvvm.utils.KeyboardManager
 import org.koin.androidx.compose.koinViewModel
 
 object ChatScreen : BaseScreen() {
@@ -172,8 +168,8 @@ object ChatScreen : BaseScreen() {
                 onValueChange = { text.value = it },
                 trailingIcon = {
                     Icon(Icons.Filled.Send,
-                        contentDescription = "",
-                        modifier = Modifier.clickable(role = Role.Button) {
+                        contentDescription = null,
+                        modifier = Modifier.onBounceClick {
                             sendMessage(text.value.text.trim(), screenState, viewModel)
                             text.value = TextFieldValue("")
                         })
@@ -181,13 +177,13 @@ object ChatScreen : BaseScreen() {
                 leadingIcon = {
                     val activity = getActivity() as? MainActivity
                     Icon(painter = painterResource(id = R.drawable.ic_image),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .clickable(role = Role.Button) {
-                                activity?.imageHelper?.select {
-                                    sendImage(it, screenState, viewModel)
-                                }
-                            })
+                        contentDescription = null,
+                        modifier = Modifier.onBounceClick {
+                            KeyboardManager.hideKeyBoard(activity)
+                            activity?.imageHelper?.select {
+                                sendImage(it, screenState, viewModel)
+                            }
+                        })
                 },
                 shape = CircleShape,
                 colors = TextFieldDefaults.textFieldColors(

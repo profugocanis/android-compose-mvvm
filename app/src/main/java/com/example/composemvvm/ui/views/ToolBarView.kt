@@ -20,7 +20,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
+import com.example.composemvvm.extentions.onBounceClick
+import com.example.composemvvm.logget
 
 @Composable
 fun ToolBarView(nav: NavHostController, startRoute: String, title: String) {
@@ -50,12 +53,12 @@ fun ToolBarView(nav: NavHostController, startRoute: String, title: String) {
                         modifier = Modifier
                             .padding(12.dp)
                             .size(32.dp)
-                            .clickable {
+                            .onBounceClick {
                                 if (nav.previousBackStackEntry != null) {
                                     nav.popBackStack()
                                 }
                             },
-                        tint = Color.Blue
+                        tint = Color.CustomBlue
                     )
                 }
             }
@@ -66,7 +69,7 @@ fun ToolBarView(nav: NavHostController, startRoute: String, title: String) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 32.dp)
+                    .padding(horizontal = 32.dp)
             )
         }
         Divider()

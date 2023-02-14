@@ -21,13 +21,12 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @ExperimentalAnimationApi
 class MainActivity : AppCompatActivity() {
 
-    private val startDestination = ChatScreen.ROUTE
+    private val startDestination = ThirdScreen.ROUTE
 
     val imageHelper: ImageHelper = ImageHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        imageHelper = ImageHelper(this)
         setContent {
             Column {
                 val title = remember { mutableStateOf("") }

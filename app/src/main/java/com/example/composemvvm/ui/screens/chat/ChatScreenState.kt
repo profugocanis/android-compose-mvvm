@@ -2,6 +2,7 @@ package com.example.composemvvm.ui.screens.chat
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import com.example.composemvvm.core.ui.ScreenState
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.utils.ScrollHelper
 import kotlinx.coroutines.CoroutineScope
@@ -9,7 +10,8 @@ import kotlinx.coroutines.Delay
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ChatScreenState(val scope: CoroutineScope) {
+class ChatScreenState(val scope: CoroutineScope): ScreenState {
+
     val isLoading = mutableStateOf(false)
     val isLastPage = mutableStateOf(false)
     val scroll = ScrollHelper()

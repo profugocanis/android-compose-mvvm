@@ -29,7 +29,7 @@ object ThirdScreen : BaseScreen() {
             logget("ThirdScreen onDestroy")
         }
 
-        Column(modifier = Modifier.fillMaxSize().background(Color.CustomBlue)) {
+        Column(modifier = Modifier.fillMaxSize()) {
             Text(text = "ThirdScreen")
 
             Button(onClick = {
