@@ -7,8 +7,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -18,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import com.example.composemvvm.R
 import com.example.composemvvm.extentions.CustomBlue
@@ -55,9 +59,11 @@ fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
     }
     val backgroundColor = if (isInput) Color.CustomBlue else Color.Gray
     val manager = (LocalContext.current as AppCompatActivity).supportFragmentManager
+    val isVisible = remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .clip(shape)
+            .alpha(if (isVisible.value) 1f else 0f)
             .border(BorderStroke(1.dp, backgroundColor), shape)
             .combinedClickable(
                 onClick = {
@@ -79,9 +85,14 @@ fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
                 .data(imageData.getImageData())
                 .crossfade(true)
                 .build(),
+            onState = {
+                isVisible.value = it is AsyncImagePainter.State.Success
+            },
             contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.size(screenWidthDp.dp)
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier
+                .height(screenWidthDp.dp)
+                .widthIn(max = (LocalConfiguration.current.screenWidthDp).dp - 32.dp)
         )
 
         val padding = if (isInput) 8.dp else 4.dp
