@@ -73,16 +73,10 @@ fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
         val screenWidthDp = LocalConfiguration.current.screenWidthDp.div(1.8)
 
         val imageData = message.getData<MessageData.Image>()
-        var data: Any? = null
-        if (imageData.url != null) {
-            data = imageData.url
-        } else if (imageData.bitmap != null) {
-            data = imageData.bitmap
-        }
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(data)
+                .data(imageData.getImageData())
                 .crossfade(true)
                 .build(),
             contentDescription = null,
