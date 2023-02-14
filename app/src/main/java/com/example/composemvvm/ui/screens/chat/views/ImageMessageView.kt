@@ -11,19 +11,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.composemvvm.R
 import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.models.MessageData
 import com.example.composemvvm.ui.dialogs.ImageViewerDialog
-import com.example.composemvvm.ui.screens.second.SecondScreen
 import com.example.composemvvm.ui.views.CustomPopMenu
 import com.example.composemvvm.ui.views.PopMenuItem
 
@@ -54,15 +54,18 @@ fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
         RoundedCornerShape(topStart = radius, topEnd = radius, bottomStart = radius)
     }
     val backgroundColor = if (isInput) Color.CustomBlue else Color.Gray
-    val manager = (SecondScreen.getContext() as AppCompatActivity).supportFragmentManager
+    val manager = (LocalContext.current as AppCompatActivity).supportFragmentManager
     Box(
         modifier = Modifier
             .clip(shape)
             .border(BorderStroke(1.dp, backgroundColor), shape)
-            .combinedClickable(onClick = {
-                val url = message.getData<MessageData.Image>().url
-                ImageViewerDialog.show(manager, url)
-            }, onLongClick = onLongClick)
+            .combinedClickable(
+                onClick = {
+                    val url = message.getData<MessageData.Image>().url
+                    ImageViewerDialog.show(manager, url)
+                },
+                onLongClick = onLongClick
+            )
             .background(backgroundColor)
             .padding(horizontal = 0.dp, vertical = 0.dp),
         contentAlignment = Alignment.BottomEnd
@@ -70,22 +73,22 @@ fun ImageMessageContentView(message: Message, onLongClick: () -> Unit) {
         val screenWidthDp = LocalConfiguration.current.screenWidthDp.div(1.8)
 
         val imageData = message.getData<MessageData.Image>()
-        var painter: Painter? = null
+        var data: Any? = null
         if (imageData.url != null) {
-            painter = rememberAsyncImagePainter(imageData.url)
+            data = imageData.url
         } else if (imageData.bitmap != null) {
-            painter = rememberAsyncImagePainter(imageData.bitmap)
+            data = imageData.bitmap
         }
 
-        if (painter != null) {
-            Image(
-                painter = painter,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(screenWidthDp.dp),
-                contentScale = ContentScale.Crop
-            )
-        }
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(data)
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.size(screenWidthDp.dp)
+        )
 
         val padding = if (isInput) 8.dp else 4.dp
         Row(

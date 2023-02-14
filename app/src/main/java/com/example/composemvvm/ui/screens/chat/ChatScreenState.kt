@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.utils.ScrollHelper
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Delay
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -14,9 +15,11 @@ class ChatScreenState(val scope: CoroutineScope) {
     val scroll = ScrollHelper()
     val messages = mutableStateListOf<Message>()
 
-    fun scrollToBottom() {
+    fun scrollToBottom(delayTime: Long = 0) {
         scope.launch {
-            delay(50)
+            if (delayTime != 0L) {
+                delay(delayTime)
+            }
             scroll.listState.animateScrollToItem(0)
         }
     }
@@ -31,7 +34,7 @@ class ChatScreenState(val scope: CoroutineScope) {
         if (!messages.contains(message)) {
             messages.add(0, message)
         }
-        scrollToBottom()
+        scrollToBottom(50)
     }
 
     fun updateMessage(message: Message) {

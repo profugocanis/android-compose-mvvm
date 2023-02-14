@@ -1,6 +1,7 @@
 package com.example.composemvvm.ui.screens.chat
 
 import android.graphics.Bitmap
+import android.view.View
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
@@ -16,12 +17,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.view.allViews
 import androidx.navigation.NavController
 import com.example.composemvvm.R
 import com.example.composemvvm.core.network.PaginationSource
@@ -36,6 +39,8 @@ import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.views.*
 import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.ui.views.PopMenuItem
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 object ChatScreen : BaseScreen() {
@@ -80,8 +85,8 @@ object ChatScreen : BaseScreen() {
                 })
 
                 ButtonScrollStart(screenState, Modifier.constrainAs(floatingButton) {
-                    bottom.linkTo(inputView.top, margin = 16.dp)
-                    end.linkTo(parent.end, margin = 16.dp)
+                    bottom.linkTo(inputView.top, margin = 8.dp)
+                    end.linkTo(parent.end, margin = 8.dp)
                 })
 
                 InputView(viewModel, screenState, modifier = Modifier.constrainAs(inputView) {
@@ -105,7 +110,7 @@ object ChatScreen : BaseScreen() {
             modifier = modifier
         ) {
             items(screenState.messages.toList(), key = { it.id }) { message ->
-                screenState.scroll.updateScroll(3)
+                screenState.scroll.updateScroll(1)
 
                 val menuItems = listOf(PopMenuItem("Delete") {
                     removeMessage(message, screenState)
@@ -209,7 +214,7 @@ object ChatScreen : BaseScreen() {
             FloatingActionButton(
                 onClick = {
                     screenState.scrollToBottom()
-                }, backgroundColor = Color.CustomBlue, modifier = Modifier.size(40.dp)
+                }, backgroundColor = Color.CustomBlue, modifier = Modifier.size(36.dp)
             ) {
                 Icon(Icons.Filled.KeyboardArrowDown, "menu", tint = Color.White)
             }
