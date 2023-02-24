@@ -16,6 +16,7 @@ class ChatScreenState(val scope: CoroutineScope): ScreenState {
     val isLastPage = mutableStateOf(false)
     val scroll = ScrollHelper()
     val messages = mutableStateListOf<Message>()
+    val replayMessage = mutableStateOf<Message?>(null)
 
     fun scrollToBottom(delayTime: Long = 0) {
         scope.launch {

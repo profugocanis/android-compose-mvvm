@@ -7,36 +7,27 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
-import com.example.composemvvm.R
 import com.example.composemvvm.core.network.PaginationSource
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.CustomBlue
-import com.example.composemvvm.extentions.CustomLightGray
-import com.example.composemvvm.extentions.onBounceClick
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.models.MessageData
-import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.views.*
 import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.ui.views.PopMenuItem
-import com.example.composemvvm.utils.KeyboardManager
 import org.koin.androidx.compose.koinViewModel
 
 object ChatScreen : BaseScreen() {
@@ -108,9 +99,13 @@ object ChatScreen : BaseScreen() {
             items(screenState.messages.toList(), key = { it.id }) { message ->
                 screenState.scroll.updateScroll(1)
 
-                val menuItems = listOf(PopMenuItem("Delete") {
-                    removeMessage(message, screenState)
-                })
+                val menuItems = listOf(
+                    PopMenuItem("Replay") {
+                        screenState.replayMessage.value = message
+                    },
+                    PopMenuItem("Delete", color = Color.Red) {
+                        removeMessage(message, screenState)
+                    })
 
                 when (message.data) {
                     is MessageData.Image -> ImageMessageView(
@@ -149,54 +144,6 @@ object ChatScreen : BaseScreen() {
         }
     }
 
-    @OptIn(ExperimentalAnimationApi::class)
-    @Composable
-    private fun InputView(
-        viewModel: ChatViewModel, screenState: ChatScreenState, modifier: Modifier
-    ) {
-        val text = remember { mutableStateOf(TextFieldValue("")) }
-        Column(modifier = modifier.fillMaxWidth()) {
-            Divider()
-
-            TextField(
-                value = text.value,
-                maxLines = 3,
-                placeholder = { Text(text = "Enter text") },
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                onValueChange = { text.value = it },
-                trailingIcon = {
-                    Icon(Icons.Filled.Send,
-                        contentDescription = null,
-                        modifier = Modifier.onBounceClick {
-                            sendMessage(text.value.text.trim(), screenState, viewModel)
-                            text.value = TextFieldValue("")
-                        })
-                },
-                leadingIcon = {
-                    val activity = getActivity() as? MainActivity
-                    Icon(painter = painterResource(id = R.drawable.ic_image),
-                        contentDescription = null,
-                        modifier = Modifier.onBounceClick {
-                            KeyboardManager.hideKeyBoard(activity)
-                            activity?.imageHelper?.select {
-                                sendImage(it, screenState, viewModel)
-                            }
-                        })
-                },
-                shape = CircleShape,
-                colors = TextFieldDefaults.textFieldColors(
-                    leadingIconColor = Color.CustomBlue,
-                    trailingIconColor = Color.CustomBlue,
-                    backgroundColor = Color.CustomLightGray,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )
-        }
-    }
 
     @OptIn(ExperimentalAnimationApi::class)
     @Composable
@@ -217,7 +164,7 @@ object ChatScreen : BaseScreen() {
         }
     }
 
-    private fun sendMessage(
+    fun sendMessage(
         text: String, screenState: ChatScreenState, viewModel: ChatViewModel
     ) {
         if (text.isEmpty()) return
@@ -226,7 +173,7 @@ object ChatScreen : BaseScreen() {
         viewModel.sendMessage(message)
     }
 
-    private fun sendImage(bitmap: Bitmap?, screenState: ChatScreenState, viewModel: ChatViewModel) {
+    fun sendImage(bitmap: Bitmap?, screenState: ChatScreenState, viewModel: ChatViewModel) {
         val messageData = MessageData.Image(bitmap = bitmap)
         val message = Message(data = messageData, isSend = false, isInput = false)
         screenState.addMessages(message)

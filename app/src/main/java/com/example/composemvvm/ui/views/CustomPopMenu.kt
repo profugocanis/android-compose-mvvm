@@ -9,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
-class PopMenuItem(val title: String, val onClick: () -> Unit)
+class PopMenuItem(val title: String, val color: Color = Color.Black, val onClick: () -> Unit)
 
 @Composable
 fun CustomPopMenu(
@@ -31,7 +33,7 @@ fun CustomPopMenu(
                     it.onClick()
                     expanded.value = false
                 }) {
-                    Text(text = it.title)
+                    Text(text = it.title, color = it.color)
                 }
             }
         }
