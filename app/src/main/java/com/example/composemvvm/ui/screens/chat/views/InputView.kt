@@ -1,6 +1,9 @@
 package com.example.composemvvm.ui.screens.chat.views
 
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -16,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -42,7 +46,16 @@ fun InputView(
 
         Divider()
 
-        if (screenState.replayMessage.value != null) {
+        AnimatedVisibility(
+            visible = screenState.replayMessage.value != null,
+            enter = expandVertically(
+                spring(
+                    stiffness = Spring.StiffnessLow,
+                    visibilityThreshold = IntSize.VisibilityThreshold
+                ),
+            ),
+            exit = shrinkVertically(),
+        ) {
             ReplayMessage(screenState)
         }
 
