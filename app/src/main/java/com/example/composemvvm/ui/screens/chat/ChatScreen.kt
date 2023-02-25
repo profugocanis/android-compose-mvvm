@@ -107,19 +107,11 @@ object ChatScreen : BaseScreen() {
                         removeMessage(message, screenState)
                     })
 
-                when (message.data) {
-                    is MessageData.Image -> ImageMessageView(
-                        message = message,
-                        modifier = Modifier.animateItemPlacement(),
-                        menuItems = menuItems,
-                    )
-                    is MessageData.Text -> TextMessageView(
-                        message = message,
-                        modifier = Modifier.animateItemPlacement(),
-                        menuItems = menuItems
-                    )
-                    null -> {}
-                }
+                MessageView(
+                    message = message,
+                    menuItems = menuItems,
+                    modifier = Modifier.animateItemPlacement()
+                )
 
                 DateView(message, screenState.messages, Modifier.animateItemPlacement())
             }
@@ -168,14 +160,24 @@ object ChatScreen : BaseScreen() {
         text: String, screenState: ChatScreenState, viewModel: ChatViewModel
     ) {
         if (text.isEmpty()) return
-        val message = Message(data = MessageData.Text(text), isSend = false, isInput = false)
+        val message = Message(
+            data = MessageData.Text(text),
+            replayedMessage = screenState.replayMessage.value,
+            isSend = false,
+            isInput = false
+        )
         screenState.addMessages(message)
         viewModel.sendMessage(message)
     }
 
     fun sendImage(bitmap: Bitmap?, screenState: ChatScreenState, viewModel: ChatViewModel) {
         val messageData = MessageData.Image(bitmap = bitmap)
-        val message = Message(data = messageData, isSend = false, isInput = false)
+        val message = Message(
+            data = messageData,
+            replayedMessage = screenState.replayMessage.value,
+            isSend = false,
+            isInput = false
+        )
         screenState.addMessages(message)
         viewModel.sendMessage(message)
     }

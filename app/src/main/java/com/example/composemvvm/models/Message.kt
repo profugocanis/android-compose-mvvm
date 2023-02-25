@@ -4,6 +4,7 @@ import java.util.*
 
 data class Message(
     val data: MessageData? = null,
+    val replayedMessage: Message? = null,
     var isSend: Boolean = true,
     val date: Date = Date(),
     val isInput: Boolean = Random().nextBoolean(),

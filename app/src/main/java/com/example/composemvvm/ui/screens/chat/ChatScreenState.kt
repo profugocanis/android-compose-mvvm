@@ -6,11 +6,10 @@ import com.example.composemvvm.core.ui.ScreenState
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.utils.ScrollHelper
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Delay
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ChatScreenState(val scope: CoroutineScope): ScreenState {
+class ChatScreenState(private val scope: CoroutineScope) : ScreenState {
 
     val isLoading = mutableStateOf(false)
     val isLastPage = mutableStateOf(false)
@@ -37,6 +36,7 @@ class ChatScreenState(val scope: CoroutineScope): ScreenState {
         if (!messages.contains(message)) {
             messages.add(0, message)
         }
+        replayMessage.value = null
         scrollToBottom(50)
     }
 
