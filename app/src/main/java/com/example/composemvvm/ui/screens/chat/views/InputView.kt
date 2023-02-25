@@ -19,8 +19,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.composemvvm.R
@@ -102,14 +105,35 @@ fun InputView(
 
 @Composable
 private fun ReplayMessage(screenState: ChatScreenState) {
-    Row(modifier = Modifier.padding(horizontal = 4.dp)) {
-        Text(text = "Replay")
+    ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+
+        val (titleView, messageView, closeIcon) = createRefs()
+
+        Text(
+            text = "Replay",
+            color = Color.Gray,
+            modifier = Modifier.constrainAs(titleView) {
+                start.linkTo(parent.start, margin = 8.dp)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+            })
+
+        val messageModifier = Modifier.constrainAs(messageView) {
+            start.linkTo(titleView.end, margin = 8.dp)
+            if (screenState.replayMessage.value?.data is MessageData.Text) {
+                end.linkTo(closeIcon.start)
+            }
+            top.linkTo(parent.top)
+            bottom.linkTo(parent.bottom)
+            width = Dimension.fillToConstraints
+        }
         when (val messageData = screenState.replayMessage.value?.data) {
             is MessageData.Text -> {
                 Text(
                     text = messageData.text ?: "",
-                    modifier = Modifier.widthIn(max = 200.dp),
-                    maxLines = 2
+                    modifier = messageModifier,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             is MessageData.Image -> {
@@ -120,7 +144,7 @@ private fun ReplayMessage(screenState: ChatScreenState) {
                         .build(),
                     contentDescription = null,
                     contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.size(56.dp)
+                    modifier = messageModifier.size(44.dp)
                 )
             }
             else -> {}
@@ -129,8 +153,15 @@ private fun ReplayMessage(screenState: ChatScreenState) {
         Icon(
             Icons.Filled.Close,
             contentDescription = null,
-            modifier = Modifier.onBounceClick {
-                screenState.replayMessage.value = null
-            })
+            modifier = Modifier
+                .constrainAs(closeIcon) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+                .padding(8.dp)
+                .onBounceClick {
+                    screenState.replayMessage.value = null
+                })
     }
 }
