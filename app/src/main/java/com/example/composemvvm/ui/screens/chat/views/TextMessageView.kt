@@ -24,15 +24,16 @@ fun TextMessageView(
     modifier: Modifier
 ) {
     val isInput = message.isInput
+    val textColor = if (isInput) Color.Black else Color.White
+    val tintColor = if (isInput) Color.Gray else Color.White
     Row(
-        modifier = modifier
-            .padding(horizontal = 4.dp, vertical = 8.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.Bottom
     ) {
         val screenWidthDp = LocalConfiguration.current.screenWidthDp.div(1.5)
         Text(
             text = message.getData<MessageData.Text>()?.text.toString(),
-            color = Color.White,
+            color = textColor,
             fontSize = 16.sp,
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -40,7 +41,7 @@ fun TextMessageView(
         )
         Text(
             text = "13:32",
-            color = Color.White,
+            color = tintColor,
             fontSize = 12.sp,
             modifier = Modifier.padding(horizontal = 4.dp)
         )
@@ -51,7 +52,7 @@ fun TextMessageView(
                 painter = painterResource(id = id),
                 contentDescription = "",
                 modifier = Modifier.size(14.dp),
-                tint = Color.White
+                tint = tintColor
             )
         }
     }

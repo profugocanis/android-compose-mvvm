@@ -110,7 +110,10 @@ object ChatScreen : BaseScreen() {
                 MessageView(
                     message = message,
                     menuItems = menuItems,
-                    modifier = Modifier.animateItemPlacement()
+                    modifier = Modifier.animateItemPlacement(),
+                    onReplayTap = {
+                        screenState.scrollToMessage(it)
+                    }
                 )
 
                 DateView(message, screenState.messages, Modifier.animateItemPlacement())

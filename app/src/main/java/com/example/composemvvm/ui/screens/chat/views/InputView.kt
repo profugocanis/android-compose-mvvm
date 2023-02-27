@@ -50,7 +50,7 @@ fun InputView(
             ),
             exit = shrinkVertically(),
         ) {
-            ReplayMessageView(
+            ReplayMessageInput(
                 screenState.replayMessage.value,
                 modifier = Modifier.fillMaxWidth(),
                 onClear = {
