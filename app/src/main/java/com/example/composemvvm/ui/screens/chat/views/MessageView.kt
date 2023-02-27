@@ -77,7 +77,6 @@ fun MessageView(
                                 end.linkTo(parent.end)
                                 width = Dimension.fillToConstraints
                             }
-//                            .fillMaxWidth()
                             .clickable { onReplayTap(message.replayedMessage) }
                             .padding(horizontal = 8.dp)
                             .padding(top = 4.dp)

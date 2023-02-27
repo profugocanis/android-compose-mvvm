@@ -1,5 +1,6 @@
 package com.example.composemvvm.ui.views
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -23,57 +24,57 @@ import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.extentions.onBounceClick
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun ToolBarView(nav: NavHostController, startRoute: String, title: String?) {
     val stackEntry = nav.currentBackStackEntryFlow.collectAsState(initial = null).value
 
-//    if (title != null)
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Box(
+            contentAlignment = Alignment.Center, modifier = Modifier
+                .height(56.dp)
+                .background(Color.CustomLightGray)
         ) {
+            val isFirstScreen =
+                stackEntry?.destination != null && stackEntry.destination.route != startRoute
+
             Box(
-                contentAlignment = Alignment.Center, modifier = Modifier
-                    .height(56.dp)
-                    .background(Color.CustomLightGray)
+                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
             ) {
-                val isFirstScreen =
-                    stackEntry?.destination != null && stackEntry.destination.route != startRoute
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
-                ) {
-                    this@Column.AnimatedVisibility(
-                        visible = isFirstScreen,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                        modifier = Modifier
-                    ) {
-                        Icon(
-                            Icons.Filled.KeyboardArrowLeft,
-                            "menu",
-                            modifier = Modifier
-                                .padding(12.dp)
-                                .size(32.dp)
-                                .onBounceClick {
-                                    if (nav.previousBackStackEntry != null) {
-                                        nav.popBackStack()
-                                    }
-                                },
-                            tint = Color.CustomBlue
-                        )
-                    }
-                }
-
-                Text(
-                    text = title.toString(),
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center,
+                this@Column.AnimatedVisibility(
+                    visible = isFirstScreen,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 32.dp)
-                )
+                ) {
+                    Icon(
+                        Icons.Filled.KeyboardArrowLeft,
+                        "menu",
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .size(32.dp)
+                            .onBounceClick {
+                                if (nav.previousBackStackEntry != null) {
+                                    nav.popBackStack()
+                                }
+                            },
+                        tint = Color.CustomBlue
+                    )
+                }
             }
-            Divider()
+
+            Text(
+                text = title ?: "",
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+            )
         }
+        Divider()
+    }
 }

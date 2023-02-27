@@ -1,5 +1,7 @@
 package com.example.composemvvm.ui.screens.third
 
+import android.app.Activity
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,15 +18,21 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.composemvvm.R
+import com.example.composemvvm.core.LanguageHelper
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.Background
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.logget
+import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.first.FirstPageScreen
+import java.util.*
 
 object ThirdScreen : BaseScreen() {
 
@@ -32,6 +40,7 @@ object ThirdScreen : BaseScreen() {
         navigate(nav)
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     fun Screen(nav: NavController) {
 
@@ -68,14 +77,40 @@ object ThirdScreen : BaseScreen() {
                     modifier = Modifier
                         .padding(16.dp)
                 ) {
-                    
-                    Text(text = "Examples:")
-                    
-                    GradientButton(listOf(Color(0xFF3361EA), Color(0xFF6285EC)), 16.dp, "List") {
+
+                    Text(text = stringResource(R.string.examples))
+
+                    GradientButton(
+                        listOf(Color(0xFF3361EA), Color(0xFF6285EC)),
+                        16.dp,
+                        stringResource(R.string.list)
+                    ) {
                         FirstPageScreen.open(nav)
                     }
-                    GradientButton(listOf(Color(0xFF6285EC), Color(0xFF3361EA)), 16.dp, "Chat") {
+                    GradientButton(
+                        listOf(Color(0xFF6285EC), Color(0xFF3361EA)),
+                        16.dp,
+                        stringResource(R.string.chat)
+                    ) {
                         ChatScreen.open(nav)
+                    }
+
+                    Spacer(modifier = Modifier.fillMaxHeight(0.9f))
+
+                    val activity = LocalContext.current as Activity
+                    val currentLanguage = LanguageHelper.language
+                    GradientButton(
+                        listOf(Color(0xFF6285EC), Color(0xFF3361EA)),
+                        16.dp,
+                        currentLanguage.language
+                    ) {
+
+                        if (currentLanguage == Locale.ENGLISH) {
+                            LanguageHelper.language = Locale("iw")
+                        } else {
+                            LanguageHelper.language = Locale.ENGLISH
+                        }
+                        MainActivity.refresh(activity)
                     }
                 }
             }

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ComposeMVVM</string>
+    <string name="enter_text">הזן טקסט</string>
+    <string name="chat">לְשׂוֹחֵחַ</string>
+    <string name="list">רשימה</string>
+    <string name="examples">דוגמאות:</string>
+    <string name="chat_screen">מסך צ\'אט</string>
+</resources>

@@ -1,5 +1,8 @@
 package com.example.composemvvm.ui.activities
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +11,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.example.composemvvm.R
+import com.example.composemvvm.core.LanguageHelper
 import com.example.composemvvm.core.image.ImageHelper
 import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.first.FirstPageScreen
@@ -21,7 +27,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @ExperimentalAnimationApi
 class MainActivity : AppCompatActivity() {
 
-    private val startDestination = ChatScreen.ROUTE
+    private val startDestination = ThirdScreen.ROUTE
 
     val imageHelper: ImageHelper = ImageHelper(this)
 
@@ -37,6 +43,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageHelper.configureContextForLanguage(newBase))
     }
 
     @Composable
@@ -59,9 +69,24 @@ class MainActivity : AppCompatActivity() {
             }
 
             ChatScreen.createComposable(this) {
-                onTitle("ChatScreen")
+                onTitle(stringResource(R.string.chat_screen))
                 ChatScreen.Screen()
             }
+        }
+    }
+
+    companion object {
+
+        fun open(context: Context) {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }
+
+        fun refresh(activity: Activity) {
+            activity.finish()
+            activity.overridePendingTransition(0, 0)
+            activity.startActivity(activity.intent)
+            activity.overridePendingTransition(0, 0)
         }
     }
 }

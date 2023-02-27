@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ComposeMVVM</string>
+    <string name="enter_text">Enter text</string>
+    <string name="chat">Chat</string>
+    <string name="list">List</string>
+    <string name="examples">Examples:</string>
+    <string name="chat_screen">Chat Screen</string>
 </resources>
