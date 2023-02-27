@@ -11,7 +11,7 @@ data class Message(
     val id: String = UUID.randomUUID().toString(),
 ) {
 
-    fun <T> getData(): T {
-        return data as T
+    fun <T> getData(): T? {
+        return data as? T
     }
 }

@@ -21,7 +21,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @ExperimentalAnimationApi
 class MainActivity : AppCompatActivity() {
 
-    private val startDestination = ChatScreen.ROUTE
+    private val startDestination = ThirdScreen.ROUTE
 
     val imageHelper: ImageHelper = ImageHelper(this)
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Column {
-                val title = remember { mutableStateOf("") }
+                val title = remember { mutableStateOf<String?>(null) }
                 val nav = rememberAnimatedNavController()
                 ToolBarView(nav, startDestination, title.value)
                 Navigation(nav) {
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun Navigation(nav: NavHostController, onTitle: (String) -> Unit) {
+    fun Navigation(nav: NavHostController, onTitle: (String?) -> Unit) {
 
         AnimatedNavHost(nav, startDestination) {
             FirstPageScreen.createComposable(this) {
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             ThirdScreen.createComposable(this) {
-                onTitle("ThirdScreen")
+                onTitle("Compose Example")
                 ThirdScreen.Screen(nav)
             }
 

@@ -1,6 +1,9 @@
 package com.example.composemvvm.ui.screens.chat.views
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -11,12 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.models.MessageData
+import com.example.composemvvm.ui.dialogs.ImageViewerDialog
+import com.example.composemvvm.ui.views.CustomPopMenu
 import com.example.composemvvm.ui.views.PopMenuItem
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MessageView(message: Message, menuItems: List<PopMenuItem>, modifier: Modifier) {
 
@@ -35,15 +42,17 @@ fun MessageView(message: Message, menuItems: List<PopMenuItem>, modifier: Modifi
         modifier = modifier
             .alpha(if (isVisible.value) 1f else 0f)
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 8.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         contentAlignment = alignment
     ) {
-        Column(
+        val manager = (LocalContext.current as AppCompatActivity).supportFragmentManager
+        CustomPopMenu(
+            menuItems,
             modifier = Modifier
                 .clip(shape)
                 .background(backgroundColor)
                 .padding(1.dp)
-        ) {
+        ) { expanded ->
             if (message.replayedMessage != null) {
                 ReplayMessageView(
                     message.replayedMessage,
@@ -60,16 +69,26 @@ fun MessageView(message: Message, menuItems: List<PopMenuItem>, modifier: Modifi
                 is MessageData.Image -> {
                     ImageMessageView(
                         message = message,
-                        modifier = Modifier.clip(shape),
-                        menuItems = menuItems,
+                        modifier = Modifier
+                            .clip(shape)
+                            .combinedClickable(
+                                onClick = {
+                                    val url = message.getData<MessageData.Image>()?.url
+                                    ImageViewerDialog.show(manager, url)
+                                },
+                                onLongClick = { expanded.value = true }
+                            ),
                         isVisible = isVisible
                     )
                 }
                 is MessageData.Text -> {
                     TextMessageView(
                         message = message,
-                        modifier = Modifier,
-                        menuItems = menuItems
+                        modifier = Modifier
+                            .combinedClickable(
+                                onClick = { },
+                                onLongClick = { expanded.value = true }
+                            ),
                     )
                 }
                 null -> {}

@@ -37,6 +37,7 @@ class ImageViewerDialog : BaseBottomDialog() {
     companion object {
 
         fun show(manager: FragmentManager, url: String?) {
+            url ?: return
             val dialog = ImageViewerDialog()
             dialog.url = url
             dialog.isCancelable = true

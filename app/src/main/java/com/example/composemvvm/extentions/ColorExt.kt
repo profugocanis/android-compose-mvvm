@@ -7,3 +7,6 @@ val Color.Companion.CustomLightGray: Color
 
 val Color.Companion.CustomBlue: Color
     get() = Color(0xFF1E8FE6)
+
+val Color.Companion.Background: Color
+    get() = Color(0x3B1E8FE6)

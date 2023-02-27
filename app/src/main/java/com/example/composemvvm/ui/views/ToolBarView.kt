@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -23,55 +22,58 @@ import androidx.navigation.NavHostController
 import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.extentions.onBounceClick
-import com.example.composemvvm.logget
 
 @Composable
-fun ToolBarView(nav: NavHostController, startRoute: String, title: String) {
+fun ToolBarView(nav: NavHostController, startRoute: String, title: String?) {
     val stackEntry = nav.currentBackStackEntryFlow.collectAsState(initial = null).value
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Box(
-            contentAlignment = Alignment.Center, modifier = Modifier
-                .height(56.dp)
-                .background(Color.CustomLightGray)
+//    if (title != null)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            val isFirstScreen =
-                stackEntry?.destination != null && stackEntry.destination.route != startRoute
-
             Box(
-                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
+                contentAlignment = Alignment.Center, modifier = Modifier
+                    .height(56.dp)
+                    .background(Color.CustomLightGray)
             ) {
-                this@Column.AnimatedVisibility(
-                    visible = isFirstScreen, enter = fadeIn(), exit = fadeOut(), modifier = Modifier
-                ) {
-                    Icon(
-                        Icons.Filled.KeyboardArrowLeft,
-                        "menu",
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .size(32.dp)
-                            .onBounceClick {
-                                if (nav.previousBackStackEntry != null) {
-                                    nav.popBackStack()
-                                }
-                            },
-                        tint = Color.CustomBlue
-                    )
-                }
-            }
+                val isFirstScreen =
+                    stackEntry?.destination != null && stackEntry.destination.route != startRoute
 
-            Text(
-                text = title,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
-            )
+                Box(
+                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
+                ) {
+                    this@Column.AnimatedVisibility(
+                        visible = isFirstScreen,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        modifier = Modifier
+                    ) {
+                        Icon(
+                            Icons.Filled.KeyboardArrowLeft,
+                            "menu",
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .size(32.dp)
+                                .onBounceClick {
+                                    if (nav.previousBackStackEntry != null) {
+                                        nav.popBackStack()
+                                    }
+                                },
+                            tint = Color.CustomBlue
+                        )
+                    }
+                }
+
+                Text(
+                    text = title.toString(),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                )
+            }
+            Divider()
         }
-        Divider()
-    }
 }
