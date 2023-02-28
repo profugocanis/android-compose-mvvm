@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
@@ -79,6 +80,8 @@ object ThirdScreen : BaseScreen() {
                 ) {
 
                     Text(text = stringResource(R.string.examples))
+
+                    BlurEffect(3f, 3f)
 
                     GradientButton(
                         listOf(Color(0xFF3361EA), Color(0xFF6285EC)),
