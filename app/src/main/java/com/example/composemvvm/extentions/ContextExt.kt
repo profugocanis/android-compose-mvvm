@@ -4,12 +4,16 @@ import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.view.View
 import android.widget.Toast
 import com.example.composemvvm.R
 
 fun Context.showInfo(msg: String) {
     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 }
+
+val Context.isRtl: Boolean
+    get() = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
 
 private var dialogAsk: AlertDialog? = null
 

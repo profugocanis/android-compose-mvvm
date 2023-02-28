@@ -5,4 +5,6 @@
     <string name="list">List</string>
     <string name="examples">Examples:</string>
     <string name="chat_screen">Chat Screen</string>
+    <string name="page">Page</string>
+    <string name="list_screen">List Screen</string>
 </resources>

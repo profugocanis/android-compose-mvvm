@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -39,11 +40,12 @@ object FirstPageScreen : BaseScreen() {
         val pagerState = rememberPagerState()
         val coroutineScope = rememberCoroutineScope()
 
+        val pageTitle = stringResource(id = com.example.composemvvm.R.string.page)
         val items = remember {
             listOf(
-                PagerItem("Page 1"),
-                PagerItem("Page 2"),
-                PagerItem("Page 3"),
+                PagerItem("$pageTitle 1"),
+                PagerItem("$pageTitle 2"),
+                PagerItem("$pageTitle 3"),
             )
         }
 

@@ -53,22 +53,22 @@ class MainActivity : AppCompatActivity() {
     fun Navigation(nav: NavHostController, onTitle: (String?) -> Unit) {
 
         AnimatedNavHost(nav, startDestination) {
-            FirstPageScreen.createComposable(this) {
-                onTitle("FirstPageScreen")
+            FirstPageScreen.createComposable(this@MainActivity, this) {
+                onTitle(stringResource(id = R.string.list_screen))
                 FirstPageScreen.Screen(nav)
             }
 
-            SecondScreen.createComposable(this) {
+            SecondScreen.createComposable(this@MainActivity, this) {
                 onTitle("SecondScreen")
                 SecondScreen.Screen(nav, it)
             }
 
-            ThirdScreen.createComposable(this) {
+            ThirdScreen.createComposable(this@MainActivity, this) {
                 onTitle("Compose Example")
                 ThirdScreen.Screen(nav)
             }
 
-            ChatScreen.createComposable(this) {
+            ChatScreen.createComposable(this@MainActivity, this) {
                 onTitle(stringResource(R.string.chat_screen))
                 ChatScreen.Screen()
             }

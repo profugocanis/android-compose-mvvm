@@ -5,4 +5,6 @@
     <string name="list">רשימה</string>
     <string name="examples">דוגמאות:</string>
     <string name="chat_screen">מסך צ\'אט</string>
+    <string name="page">עמוד</string>
+    <string name="list_screen">מסך רשימה</string>
 </resources>

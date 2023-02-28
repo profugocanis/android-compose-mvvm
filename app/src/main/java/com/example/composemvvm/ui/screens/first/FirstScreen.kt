@@ -1,8 +1,8 @@
 package com.example.composemvvm.ui.screens.first
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,7 +12,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,10 +22,10 @@ import androidx.navigation.NavController
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.core.ui.ScreenState
+import com.example.composemvvm.extentions.onBounceClick
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.screens.second.SecondScreen
-import com.example.composemvvm.ui.views.ConstraintLoadView
 import com.example.composemvvm.utils.ScrollHelper
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import kotlinx.coroutines.launch
@@ -34,22 +33,23 @@ import org.koin.androidx.compose.koinViewModel
 
 object FirstScreen : BaseScreen() {
 
-    private class FirstScreenState: ScreenState {
+    private class FirstScreenState : ScreenState {
 
         var products: MutableSet<Product>? = null
-        val isLoading = mutableStateOf(false)
         val scroll = ScrollHelper()
-    }
-
-    fun open(nav: NavController) {
-        navigate(nav)
     }
 
     @Composable
     fun Screen(
-        nav: NavController, key: String, viewModel: FirstViewModel = koinViewModel(key = key)
+        nav: NavController,
+        key: String,
+        viewModel: FirstViewModel = koinViewModel(key = key)
     ) {
-        ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
 
             val screenState = viewModel.rememberScreenState { FirstScreenState() }
 
@@ -57,20 +57,13 @@ object FirstScreen : BaseScreen() {
                 logget("FirstScreen onDestroy")
             }
 
-            val (loadView, productListView, floatingButton) = createRefs()
+            val (floatingButton) = createRefs()
 
             HandleProducts(viewModel.productsState, viewModel, screenState)
 
             screenState.scroll.refreshing.isRefreshing = false
 
-            AnimatedVisibility(visible = screenState.products != null,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier.constrainAs(productListView) {}) {
-                ProductList(nav, viewModel, screenState)
-            }
-
-            ConstraintLoadView(screenState.isLoading.value, loadView)
+            ProductList(nav, viewModel, screenState)
 
             AnimatedVisibility(visible = screenState.scroll.isShowFloating.value,
                 enter = slideInVertically { 300 },
@@ -91,9 +84,12 @@ object FirstScreen : BaseScreen() {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun ProductList(
-        nav: NavController, viewModel: FirstViewModel, screenState: FirstScreenState
+        nav: NavController,
+        viewModel: FirstViewModel,
+        screenState: FirstScreenState,
     ) {
         SwipeRefresh(
             state = screenState.scroll.refreshing, onRefresh = {
@@ -103,15 +99,17 @@ object FirstScreen : BaseScreen() {
         ) {
             LazyColumn(
                 state = screenState.scroll.listState,
-                contentPadding = PaddingValues(vertical = 4.dp)
+                contentPadding = PaddingValues(top = 4.dp, bottom = 4.dp),
+                userScrollEnabled = screenState.scroll.isScrollEnable.value
             ) {
-                items(screenState.products?.toList() ?: listOf(), key = { it.id.toString() }) {
+                items(screenState.products?.toList() ?: listOf(), key = { it.uuid }) {
                     screenState.scroll.updateScroll()
                     ProductView(it,
                         modifier = Modifier
+                            .animateItemPlacement()
                             .fillParentMaxWidth()
                             .padding(PaddingValues(vertical = 8.dp, horizontal = 8.dp))
-                            .clickable {
+                            .onBounceClick {
                                 SecondScreen.open(nav, it)
                             })
                 }
@@ -138,21 +136,24 @@ object FirstScreen : BaseScreen() {
 
     @Composable
     private fun HandleProducts(
-        source: Source<List<Product>>, viewModel: FirstViewModel, screenState: FirstScreenState
+        source: Source<List<Product>>,
+        viewModel: FirstViewModel,
+        screenState: FirstScreenState
     ) {
         when (source) {
-            is Source.Processing -> screenState.isLoading.value = true
+            is Source.Processing -> {
+                screenState.products = productMock.toMutableSet()
+            }
             is Source.Success -> {
+                screenState.scroll.isScrollEnable.value = true
                 if (viewModel.page == 0) {
-                    screenState.products = mutableSetOf()
+                    screenState.products?.clear()
                 }
                 screenState.products?.addAll(source.data ?: listOf())
-                screenState.isLoading.value = false
                 screenState.scroll.isLastPage.value = viewModel.page >= 2
             }
             is Source.Error -> {
                 ShowError(source.exception)
-                screenState.isLoading.value = false
             }
         }
     }

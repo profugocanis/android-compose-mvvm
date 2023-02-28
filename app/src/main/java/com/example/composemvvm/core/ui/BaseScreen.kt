@@ -1,14 +1,17 @@
 package com.example.composemvvm.core.ui
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.example.composemvvm.core.NavigationArguments
+import com.example.composemvvm.extentions.isRtl
 import com.example.composemvvm.extentions.showInfoDialog
 import com.google.accompanist.navigation.animation.composable
 
@@ -42,12 +45,15 @@ abstract class BaseScreen : ComposableUtils() {
 
     @OptIn(ExperimentalAnimationApi::class)
     fun createComposable(
+        context: Context,
         builder: NavGraphBuilder,
         content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
     ) {
+        val isRtl = context.isRtl
         val duration = 300
-        val leftDirection = AnimatedContentScope.SlideDirection.Left
-        val rightDirection = AnimatedContentScope.SlideDirection.Right
+        val targetOffset = if (isRtl) 200 else -200
+        val leftDirection = if (isRtl) AnimatedContentScope.SlideDirection.Right else AnimatedContentScope.SlideDirection.Left
+        val rightDirection = if (isRtl) AnimatedContentScope.SlideDirection.Left else AnimatedContentScope.SlideDirection.Right
         return builder.composable(
             ROUTE,
             arguments = arguments.getNavigationArguments(),
@@ -58,18 +64,45 @@ abstract class BaseScreen : ComposableUtils() {
                 slideOutOfContainer(
                     leftDirection,
                     animationSpec = tween(duration),
-                    targetOffset = { -200 })
+                    targetOffset = { targetOffset })
             },
             popEnterTransition = {
                 slideIntoContainer(
                     rightDirection,
-                    initialOffset = { -200 },
+                    initialOffset = { targetOffset },
                     animationSpec = tween(duration)
                 )
             },
             popExitTransition = {
                 slideOutOfContainer(rightDirection, animationSpec = tween(duration))
             },
+
+
+
+
+//            enterTransition = {
+//                slideIntoContainer(rightDirection, animationSpec = tween(duration))
+//            },
+//            exitTransition = {
+//                slideOutOfContainer(
+//                    rightDirection,
+//                    animationSpec = tween(duration),
+//                    targetOffset = { 200 })
+//            },
+//            popEnterTransition = {
+//                slideIntoContainer(
+//                    leftDirection,
+//                    initialOffset = { 200 },
+//                    animationSpec = tween(duration)
+//                )
+//            },
+//            popExitTransition = {
+//                slideOutOfContainer(leftDirection, animationSpec = tween(duration))
+//            },
+
+
+
+
             content = content
         )
     }
