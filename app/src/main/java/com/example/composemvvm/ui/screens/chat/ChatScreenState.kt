@@ -3,7 +3,6 @@ package com.example.composemvvm.ui.screens.chat
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import com.example.composemvvm.core.ui.ScreenState
-import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.utils.ScrollHelper
 import kotlinx.coroutines.CoroutineScope

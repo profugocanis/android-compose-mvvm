@@ -76,33 +76,6 @@ abstract class BaseScreen : ComposableUtils() {
             popExitTransition = {
                 slideOutOfContainer(rightDirection, animationSpec = tween(duration))
             },
-
-
-
-
-//            enterTransition = {
-//                slideIntoContainer(rightDirection, animationSpec = tween(duration))
-//            },
-//            exitTransition = {
-//                slideOutOfContainer(
-//                    rightDirection,
-//                    animationSpec = tween(duration),
-//                    targetOffset = { 200 })
-//            },
-//            popEnterTransition = {
-//                slideIntoContainer(
-//                    leftDirection,
-//                    initialOffset = { 200 },
-//                    animationSpec = tween(duration)
-//                )
-//            },
-//            popExitTransition = {
-//                slideOutOfContainer(leftDirection, animationSpec = tween(duration))
-//            },
-
-
-
-
             content = content
         )
     }

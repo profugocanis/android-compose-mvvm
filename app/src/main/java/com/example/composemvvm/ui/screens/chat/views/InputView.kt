@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -22,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.composemvvm.R
 import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
+import com.example.composemvvm.extentions.isRtl
 import com.example.composemvvm.extentions.onBounceClick
 import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.ChatScreen
@@ -71,21 +74,24 @@ fun InputView(
                 Icon(
                     Icons.Filled.Send,
                     contentDescription = null,
-                    modifier = Modifier.onBounceClick {
-                        ChatScreen.sendMessage(text.value.text.trim(), screenState, viewModel)
-                        text.value = TextFieldValue("")
-                    })
+                    modifier = Modifier
+                        .scale(scaleX = if (LocalContext.current.isRtl) -1f else 1f, scaleY = 1f)
+                        .onBounceClick {
+                            ChatScreen.sendMessage(text.value.text.trim(), screenState, viewModel)
+                            text.value = TextFieldValue("")
+                        })
             },
             leadingIcon = {
                 val activity = ChatScreen.getActivity() as? MainActivity
                 Icon(painter = painterResource(id = R.drawable.ic_image),
                     contentDescription = null,
-                    modifier = Modifier.onBounceClick {
-                        KeyboardManager.hideKeyBoard(activity)
-                        activity?.imageHelper?.select {
-                            ChatScreen.sendImage(it, screenState, viewModel)
-                        }
-                    })
+                    modifier = Modifier
+                        .onBounceClick {
+                            KeyboardManager.hideKeyBoard(activity)
+                            activity?.imageHelper?.select {
+                                ChatScreen.sendImage(it, screenState, viewModel)
+                            }
+                        })
             },
             shape = CircleShape,
             colors = TextFieldDefaults.textFieldColors(

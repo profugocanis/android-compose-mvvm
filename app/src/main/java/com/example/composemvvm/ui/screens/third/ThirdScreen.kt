@@ -81,8 +81,6 @@ object ThirdScreen : BaseScreen() {
 
                     Text(text = stringResource(R.string.examples))
 
-                    BlurEffect(3f, 3f)
-
                     GradientButton(
                         listOf(Color(0xFF3361EA), Color(0xFF6285EC)),
                         16.dp,
