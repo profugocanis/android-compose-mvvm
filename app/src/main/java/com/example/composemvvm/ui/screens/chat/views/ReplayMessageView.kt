@@ -1,6 +1,7 @@
 package com.example.composemvvm.ui.screens.chat.views
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -62,6 +64,7 @@ fun ReplayMessageView(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(44.dp)
+                        .clip(RoundedCornerShape(4))
                         .clipToBounds()
                 )
             }
@@ -136,7 +139,9 @@ fun ReplayMessageInput(
                         .build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = messageModifier.size(44.dp)
+                    modifier = messageModifier
+                        .clip(RoundedCornerShape(4))
+                        .size(44.dp)
                 )
             }
             else -> {}

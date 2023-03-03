@@ -71,7 +71,6 @@ object ThirdScreen : BaseScreen() {
                         .clip(shape)
                         .background(Color.Background)
                         .fillMaxSize()
-
                 ) {}
 
                 Column(
