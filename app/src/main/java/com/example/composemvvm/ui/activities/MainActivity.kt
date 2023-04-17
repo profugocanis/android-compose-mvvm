@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     fun Navigation(nav: NavHostController, onTitle: (String?) -> Unit) {
-
         AnimatedNavHost(nav, startDestination) {
             FirstPageScreen.createComposable(this@MainActivity, this) {
                 onTitle(stringResource(id = R.string.list_screen))

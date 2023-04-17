@@ -1,12 +1,11 @@
 package com.example.composemvvm.core.ui
 
 import android.content.Context
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -52,8 +51,11 @@ abstract class BaseScreen : ComposableUtils() {
         val isRtl = context.isRtl
         val duration = 300
         val targetOffset = if (isRtl) 200 else -200
-        val leftDirection = if (isRtl) AnimatedContentScope.SlideDirection.Right else AnimatedContentScope.SlideDirection.Left
-        val rightDirection = if (isRtl) AnimatedContentScope.SlideDirection.Left else AnimatedContentScope.SlideDirection.Right
+
+        val leftDirection =
+            if (isRtl) AnimatedContentTransitionScope.SlideDirection.Right else AnimatedContentTransitionScope.SlideDirection.Left
+        val rightDirection =
+            if (isRtl) AnimatedContentTransitionScope.SlideDirection.Left else AnimatedContentTransitionScope.SlideDirection.Right
         return builder.composable(
             ROUTE,
             arguments = arguments.getNavigationArguments(),

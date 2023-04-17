@@ -39,8 +39,6 @@ object ChatScreen : BaseScreen() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Screen(viewModel: ChatViewModel = koinViewModel()) {
-        logget("ChatScreen update")
-
         val scope = rememberCoroutineScope()
         val screenState = viewModel.rememberScreenState { ChatScreenState(scope) }
 
@@ -139,8 +137,6 @@ object ChatScreen : BaseScreen() {
         }
     }
 
-
-    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     private fun ButtonScrollStart(screenState: ChatScreenState, modifier: Modifier) {
         AnimatedVisibility(
@@ -159,9 +155,7 @@ object ChatScreen : BaseScreen() {
         }
     }
 
-    fun sendMessage(
-        text: String, screenState: ChatScreenState, viewModel: ChatViewModel
-    ) {
+    fun sendMessage(text: String, screenState: ChatScreenState, viewModel: ChatViewModel) {
         if (text.isEmpty()) return
         val message = Message(
             data = MessageData.Text(text),
@@ -200,6 +194,7 @@ object ChatScreen : BaseScreen() {
                 screenState.isLastPage.value = source.data?.isLastPage ?: true
                 screenState.isLoading.value = false
             }
+
             is Source.Error -> {
                 ShowError(source.exception)
                 screenState.isLoading.value = false
