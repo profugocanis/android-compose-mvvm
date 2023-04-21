@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseViewModel
 import com.example.composemvvm.core.network.Source
-import com.example.composemvvm.logget
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -19,6 +18,9 @@ class FourthViewModel(
             (1..100).forEach {
                 delay(1_000)
                 testValueLiveData.value = Source.Success(it)
+//                if (it == 3) {
+//                    testValueLiveData.value = Source.Error(Exception("Opps, something went wrong"))
+//                }
             }
         }
     }

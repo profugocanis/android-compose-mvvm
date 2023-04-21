@@ -8,14 +8,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.ui.platform.LocalView
 import androidx.navigation.NavController
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
+import com.example.composemvvm.extentions.showInfoDialog
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.screens.second.SecondScreen
@@ -32,7 +31,8 @@ object FourthScreen : BaseScreen() {
 
         val screenState = viewModel.rememberScreenState { FourthScreenState() }
 
-        onCreate {lifecycleOwner ->
+        val context = LocalContext.current
+        onCreate { lifecycleOwner ->
             logget("onCreate")
             viewModel.testValueLiveData.observe(lifecycleOwner) {
                 when (it) {
@@ -40,11 +40,20 @@ object FourthScreen : BaseScreen() {
                     is Source.Success -> {
                         screenState.valueState.value = it.data ?: 0
                     }
-
-                    is Source.Error -> Unit
+                    is Source.Error -> {
+                        context.showInfoDialog(it.getErrorMessage())
+                    }
                 }
             }
             viewModel.start()
+        }
+
+        onResume {
+            logget("onResume")
+        }
+
+        onDestroy {
+            logget("onDestroy")
         }
 
         Content(nav, screenState)

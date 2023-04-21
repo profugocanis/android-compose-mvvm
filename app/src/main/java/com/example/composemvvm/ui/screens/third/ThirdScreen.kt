@@ -45,7 +45,7 @@ object ThirdScreen : BaseScreen() {
     @Composable
     fun Screen(nav: NavController) {
 
-        onDestroy(nav = nav) {
+        onDestroy {
             logget("ThirdScreen onDestroy")
         }
 

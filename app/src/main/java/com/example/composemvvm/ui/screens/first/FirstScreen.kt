@@ -54,7 +54,7 @@ object FirstScreen : BaseScreen() {
 
             val screenState = viewModel.rememberScreenState { FirstScreenState() }
 
-            onDestroy(nav = nav) {
+            onDestroy {
                 logget("FirstScreen onDestroy")
             }
 

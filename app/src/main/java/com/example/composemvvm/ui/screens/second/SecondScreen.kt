@@ -17,7 +17,6 @@ import com.example.composemvvm.core.NavigationArguments
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.getInt
 import com.example.composemvvm.extentions.getObject
-import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.dialogs.ProductBottomDialog
 import org.koin.androidx.compose.koinViewModel
@@ -50,10 +49,6 @@ object SecondScreen : BaseScreen() {
         val product = stackEntry?.getObject<Product>(PRODUCT_KEY)
         val productId = stackEntry?.getInt(PRODUCT_NAME_KEY)
         val manager = (getContext() as AppCompatActivity).supportFragmentManager
-
-        onDestroy(nav = nav) {
-            logget("SecondScreen onDestroy")
-        }
 
         Column(
             modifier = Modifier
