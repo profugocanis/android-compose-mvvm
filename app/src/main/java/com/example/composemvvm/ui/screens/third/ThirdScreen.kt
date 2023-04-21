@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
@@ -33,6 +32,7 @@ import com.example.composemvvm.logget
 import com.example.composemvvm.ui.activities.MainActivity
 import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.first.FirstPageScreen
+import com.example.composemvvm.ui.screens.fourth.FourthScreen
 import java.util.*
 
 object ThirdScreen : BaseScreen() {
@@ -93,6 +93,14 @@ object ThirdScreen : BaseScreen() {
                         stringResource(R.string.chat)
                     ) {
                         ChatScreen.open(nav)
+                    }
+
+                    GradientButton(
+                        listOf(Color(0xFF6285EC), Color(0xFF3361EA)),
+                        16.dp,
+                        "Fourth Screen"
+                    ) {
+                        FourthScreen.open(nav)
                     }
 
                     Spacer(modifier = Modifier.fillMaxHeight(0.9f))

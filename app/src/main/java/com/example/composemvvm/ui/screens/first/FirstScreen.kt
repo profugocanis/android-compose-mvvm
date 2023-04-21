@@ -45,6 +45,7 @@ object FirstScreen : BaseScreen() {
         key: String,
         viewModel: FirstViewModel = koinViewModel(key = key)
     ) {
+
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
@@ -144,6 +145,7 @@ object FirstScreen : BaseScreen() {
             is Source.Processing -> {
                 screenState.products = productMock.toMutableSet()
             }
+
             is Source.Success -> {
                 screenState.scroll.isScrollEnable.value = true
                 if (viewModel.page == 0) {
@@ -152,6 +154,7 @@ object FirstScreen : BaseScreen() {
                 screenState.products?.addAll(source.data ?: listOf())
                 screenState.scroll.isLastPage.value = viewModel.page >= 2
             }
+
             is Source.Error -> {
                 ShowError(source.exception)
             }

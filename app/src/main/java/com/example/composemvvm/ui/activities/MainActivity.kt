@@ -18,6 +18,7 @@ import com.example.composemvvm.core.LanguageHelper
 import com.example.composemvvm.core.image.ImageHelper
 import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.first.FirstPageScreen
+import com.example.composemvvm.ui.screens.fourth.FourthScreen
 import com.example.composemvvm.ui.screens.second.SecondScreen
 import com.example.composemvvm.ui.screens.third.ThirdScreen
 import com.example.composemvvm.ui.views.ToolBarView
@@ -70,6 +71,11 @@ class MainActivity : AppCompatActivity() {
             ChatScreen.createComposable(this@MainActivity, this) {
                 onTitle(stringResource(R.string.chat_screen))
                 ChatScreen.Screen()
+            }
+
+            FourthScreen.createComposable(this@MainActivity, this) {
+                onTitle("FourthScreen")
+                FourthScreen.Screen(nav)
             }
         }
     }

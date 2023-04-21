@@ -2,6 +2,7 @@ package com.example.composemvvm.di
 
 import com.example.composemvvm.ui.screens.chat.ChatViewModel
 import com.example.composemvvm.ui.screens.first.FirstViewModel
+import com.example.composemvvm.ui.screens.fourth.FourthViewModel
 import com.example.composemvvm.ui.screens.second.SecondViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -26,6 +27,12 @@ val viewModelModule = module {
             application = get(),
             getMessageListUseCase = get(),
             sendMessageUseCase = get()
+        )
+    }
+
+    viewModel {
+        FourthViewModel(
+            application = get(),
         )
     }
 }
