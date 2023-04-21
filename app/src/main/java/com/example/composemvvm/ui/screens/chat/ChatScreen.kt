@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -22,6 +23,7 @@ import com.example.composemvvm.core.network.PaginationSource
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.CustomBlue
+import com.example.composemvvm.extentions.showInfoDialog
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.models.MessageData
@@ -39,11 +41,19 @@ object ChatScreen : BaseScreen() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Screen(viewModel: ChatViewModel = koinViewModel()) {
-        val scope = rememberCoroutineScope()
-        val screenState = viewModel.rememberScreenState { ChatScreenState(scope) }
 
-        HandleMessages(viewModel.messagesState, screenState)
-        HandleUpdateMessage(viewModel.updatedMessageState, screenState)
+        val screenState = viewModel.rememberScreenState { ChatScreenState() }
+
+        val coroutineScope = rememberCoroutineScope()
+        val context = LocalContext.current
+
+        onCreate { owner ->
+            screenState.coroutineScope = coroutineScope
+            screenState.context = context
+            viewModel.updatedMessageState.observe(owner) { handleUpdateMessage(it, screenState) }
+            viewModel.messagesState.observe(owner) { handleMessages(it, screenState) }
+            viewModel.load()
+        }
 
         CompositionLocalProvider(
             LocalOverscrollConfiguration provides null,
@@ -183,9 +193,9 @@ object ChatScreen : BaseScreen() {
         screenState.messages.remove(message)
     }
 
-    @Composable
-    private fun HandleMessages(
-        source: Source<PaginationSource<Message>>, screenState: ChatScreenState
+    private fun handleMessages(
+        source: Source<PaginationSource<Message>>,
+        screenState: ChatScreenState
     ) {
         when (source) {
             is Source.Processing -> screenState.isLoading.value = true
@@ -196,19 +206,18 @@ object ChatScreen : BaseScreen() {
             }
 
             is Source.Error -> {
-                ShowError(source.exception)
+                screenState.context?.showInfoDialog(source.getErrorMessage())
                 screenState.isLoading.value = false
             }
         }
     }
 
-    @Composable
-    private fun HandleUpdateMessage(source: Source<Message>, screenState: ChatScreenState) {
+    private fun handleUpdateMessage(source: Source<Message>, screenState: ChatScreenState) {
         when (source) {
             is Source.Processing -> Unit
             is Source.Success -> source.data?.let { screenState.updateMessage(it) }
             is Source.Error -> {
-                ShowError(source.exception)
+                screenState.context?.showInfoDialog(source.getErrorMessage())
             }
         }
     }

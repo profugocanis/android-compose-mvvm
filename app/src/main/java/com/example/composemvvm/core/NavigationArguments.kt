@@ -30,7 +30,6 @@ class NavigationArguments {
 
     fun getNavigationArguments() = arguments
 
-
     fun createParameters(args: Map<String, Any> = mapOf()): String {
         var parameters = ""
 

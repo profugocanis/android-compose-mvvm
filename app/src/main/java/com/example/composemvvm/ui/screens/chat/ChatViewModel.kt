@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseViewModel
 import com.example.composemvvm.core.network.PaginationSource
 import com.example.composemvvm.core.network.Source
+import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.usecases.GetMessageListUseCase
 import com.example.composemvvm.usecases.SendMessageUseCase
@@ -18,36 +19,33 @@ class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
 ) : BaseViewModel(application) {
 
-    var messagesState by createSourceMutableState<PaginationSource<Message>>()
+    var messagesState = createSourceMutableLiveData<PaginationSource<Message>>()
         private set
 
-    var updatedMessageState by createSourceMutableState<Message>()
+    var updatedMessageState = createSourceMutableLiveData<Message>()
         private set
 
     private var page = 0
 
-    init {
-        load()
-    }
-
-    private fun load() {
-        messagesState = Source.Processing()
+    fun load() {
+        messagesState.value = Source.Processing()
         page = 0
         viewModelScope.launch {
-            messagesState = getMessageListUseCase(page)
+            messagesState.value = getMessageListUseCase(page)
         }
     }
 
     fun loadMore() {
         page++
         viewModelScope.launch {
-            messagesState = getMessageListUseCase(page)
+            messagesState.value = getMessageListUseCase(page)
         }
     }
 
     fun sendMessage(message: Message) {
         viewModelScope.launch {
-            updatedMessageState = sendMessageUseCase(message)
+            updatedMessageState.value = sendMessageUseCase(message)
+//            updatedMessageState.value = Source.Error(Exception("Opss"))
         }
     }
 }

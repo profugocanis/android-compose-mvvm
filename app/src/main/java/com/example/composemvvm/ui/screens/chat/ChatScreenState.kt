@@ -1,5 +1,6 @@
 package com.example.composemvvm.ui.screens.chat
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import com.example.composemvvm.core.ui.ScreenState
@@ -9,7 +10,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ChatScreenState(private val scope: CoroutineScope) : ScreenState {
+class ChatScreenState : ScreenState {
+
+    var coroutineScope: CoroutineScope? = null
+    var context: Context? = null
 
     val isLoading = mutableStateOf(false)
     val isLastPage = mutableStateOf(false)
@@ -20,13 +24,13 @@ class ChatScreenState(private val scope: CoroutineScope) : ScreenState {
     fun scrollToMessage(message: Message) {
         val index = messages.indexOf(message)
         if (index == -1) return
-        scope.launch {
+        coroutineScope?.launch {
             scroll.listState.animateScrollToItem(index)
         }
     }
 
     fun scrollToBottom(delayTime: Long = 0) {
-        scope.launch {
+        coroutineScope?.launch {
             if (delayTime != 0L) {
                 delay(delayTime)
             }
