@@ -1,25 +1,25 @@
 package com.example.composemvvm.ui.screens.first
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewModelScope
+import com.example.composemvvm.core.BaseStateViewModel
 import com.example.composemvvm.core.BaseViewModel
 import com.example.composemvvm.core.network.Source
-import com.example.composemvvm.models.Product
+import com.example.composemvvm.core.ui.BaseScreenState
 import com.example.composemvvm.usecases.GetProductsUseCase
 import kotlinx.coroutines.launch
 
 class FirstViewModel(
     application: Application,
     private val getProductsUseCase: GetProductsUseCase
-) : BaseViewModel(application) {
+) : BaseStateViewModel(application) {
 
-    var productsState by createSourceMutableState<List<Product>>()
-        private set
+    override var uiState = FirstScreenState()
 
-    var page = 0
-        private set
+    private var page = 0
 
     init {
         load()
@@ -27,18 +27,21 @@ class FirstViewModel(
 
     fun load(isProgress: Boolean = true) {
         if (isProgress) {
-            productsState = Source.Processing()
+            uiState.handleProducts(Source.Processing())
         }
         page = 0
         viewModelScope.launch {
-            productsState = getProductsUseCase(page)
+            val source = getProductsUseCase(page)
+            uiState.handleProducts(source, page)
         }
     }
 
     fun loadMore() {
         page++
         viewModelScope.launch {
-            productsState = getProductsUseCase(page)
+            val source = getProductsUseCase(page)
+//            val source = Source.Error(Exception("Opps!"))
+            uiState.handleProducts(source, page)
         }
     }
 }

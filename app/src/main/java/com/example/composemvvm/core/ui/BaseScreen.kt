@@ -11,7 +11,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.example.composemvvm.core.NavigationArguments
 import com.example.composemvvm.extentions.isRtl
-import com.example.composemvvm.extentions.showInfoDialog
 import com.google.accompanist.navigation.animation.composable
 
 abstract class BaseScreen : ComposableUtils() {
@@ -24,12 +23,6 @@ abstract class BaseScreen : ComposableUtils() {
     fun navigate(nav: NavController, args: Map<String, Any> = mapOf()) {
         val parameters = arguments.createParameters(args)
         nav.navigate("$CLEAR_ROUTE?$parameters")
-    }
-
-    @Composable
-    fun ShowError(error: Throwable) {
-        val message = error.localizedMessage
-        getContext().showInfoDialog(message) { }
     }
 
     @OptIn(ExperimentalAnimationApi::class)

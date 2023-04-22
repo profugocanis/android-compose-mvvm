@@ -7,6 +7,7 @@ import android.content.Context
 import android.view.View
 import android.widget.Toast
 import com.example.composemvvm.R
+import com.example.composemvvm.logget
 
 fun Context.showInfo(msg: String) {
     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
@@ -63,7 +64,7 @@ fun Context.showInfoDialog(
             }
         dialogAsk = builder.show()
     } catch (e: Exception) {
-        e.printStackTrace()
+        logget(e)
     }
     return dialogAsk
 }

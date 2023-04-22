@@ -103,7 +103,7 @@ object ThirdScreen : BaseScreen() {
                         FourthScreen.open(nav)
                     }
 
-                    Spacer(modifier = Modifier.fillMaxHeight(0.9f))
+                    Spacer(modifier = Modifier.fillMaxHeight(0.8f))
 
                     val activity = LocalContext.current as Activity
                     val currentLanguage = LanguageHelper.language

@@ -42,14 +42,9 @@ object ChatScreen : BaseScreen() {
     @Composable
     fun Screen(viewModel: ChatViewModel = koinViewModel()) {
 
-        val screenState = viewModel.rememberScreenState { ChatScreenState() }
-
-        val coroutineScope = rememberCoroutineScope()
-        val context = LocalContext.current
+        val screenState: ChatScreenState = viewModel.getState()
 
         onCreate { owner ->
-            screenState.coroutineScope = coroutineScope
-            screenState.context = context
             viewModel.updatedMessageState.observe(owner) { handleUpdateMessage(it, screenState) }
             viewModel.messagesState.observe(owner) { handleMessages(it, screenState) }
             viewModel.load()

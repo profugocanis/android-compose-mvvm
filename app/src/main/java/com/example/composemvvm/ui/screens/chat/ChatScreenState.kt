@@ -1,25 +1,32 @@
 package com.example.composemvvm.ui.screens.chat
 
 import android.content.Context
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import com.example.composemvvm.core.ui.ScreenState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import com.example.composemvvm.core.ui.BaseScreenState
 import com.example.composemvvm.models.Message
 import com.example.composemvvm.utils.ScrollHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ChatScreenState : ScreenState {
+class ChatScreenState : BaseScreenState() {
 
     var coroutineScope: CoroutineScope? = null
-    var context: Context? = null
 
     val isLoading = mutableStateOf(false)
     val isLastPage = mutableStateOf(false)
     val scroll = ScrollHelper()
     val messages = mutableStateListOf<Message>()
     val replayMessage = mutableStateOf<Message?>(null)
+
+    @Composable
+    override fun InitComposable() {
+        coroutineScope = rememberCoroutineScope()
+    }
 
     fun scrollToMessage(message: Message) {
         val index = messages.indexOf(message)

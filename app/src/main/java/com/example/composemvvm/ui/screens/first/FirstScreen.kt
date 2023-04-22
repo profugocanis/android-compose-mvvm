@@ -19,25 +19,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreen
-import com.example.composemvvm.core.ui.ScreenState
 import com.example.composemvvm.extentions.onBounceClick
-import com.example.composemvvm.logget
-import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.screens.second.SecondScreen
-import com.example.composemvvm.utils.ScrollHelper
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 object FirstScreen : BaseScreen() {
-
-    private class FirstScreenState : ScreenState {
-
-        var products: MutableSet<Product>? = null
-        val scroll = ScrollHelper()
-    }
 
     @Composable
     fun Screen(
@@ -51,16 +40,9 @@ object FirstScreen : BaseScreen() {
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-
-            val screenState = viewModel.rememberScreenState { FirstScreenState() }
-
-            onDestroy {
-                logget("FirstScreen onDestroy")
-            }
+            val screenState: FirstScreenState = viewModel.getState()
 
             val (floatingButton) = createRefs()
-
-            HandleProducts(viewModel.productsState, viewModel, screenState)
 
             screenState.scroll.refreshing.isRefreshing = false
 
@@ -103,7 +85,8 @@ object FirstScreen : BaseScreen() {
                 contentPadding = PaddingValues(top = 4.dp, bottom = 4.dp),
                 userScrollEnabled = screenState.scroll.isScrollEnable.value
             ) {
-                items(screenState.products?.toList() ?: listOf(), key = { it.uuid }) {
+
+                items(screenState.products, key = { it.uuid }) {
                     screenState.scroll.updateScroll()
                     ProductView(it,
                         modifier = Modifier
@@ -131,32 +114,6 @@ object FirstScreen : BaseScreen() {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    @Composable
-    private fun HandleProducts(
-        source: Source<List<Product>>,
-        viewModel: FirstViewModel,
-        screenState: FirstScreenState
-    ) {
-        when (source) {
-            is Source.Processing -> {
-                screenState.products = productMock.toMutableSet()
-            }
-
-            is Source.Success -> {
-                screenState.scroll.isScrollEnable.value = true
-                if (viewModel.page == 0) {
-                    screenState.products?.clear()
-                }
-                screenState.products?.addAll(source.data ?: listOf())
-                screenState.scroll.isLastPage.value = viewModel.page >= 2
-            }
-
-            is Source.Error -> {
-                ShowError(source.exception)
             }
         }
     }
