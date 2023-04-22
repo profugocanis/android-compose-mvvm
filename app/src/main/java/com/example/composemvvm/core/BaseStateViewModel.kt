@@ -7,7 +7,7 @@ import com.example.composemvvm.core.ui.BaseScreenState
 @Suppress("UNCHECKED_CAST")
 abstract class BaseStateViewModel(application: Application) : BaseViewModel(application) {
 
-    abstract val uiState: BaseScreenState
+    protected abstract val uiState: BaseScreenState
 
     @Composable
     fun <T : BaseScreenState> getState(): T {

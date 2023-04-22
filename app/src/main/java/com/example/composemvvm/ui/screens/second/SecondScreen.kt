@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.example.composemvvm.core.NavigationArguments
@@ -48,7 +49,7 @@ object SecondScreen : BaseScreen() {
         val value = rememberSaveable() { mutableStateOf(0) }
         val product = stackEntry?.getObject<Product>(PRODUCT_KEY)
         val productId = stackEntry?.getInt(PRODUCT_NAME_KEY)
-        val manager = (getContext() as AppCompatActivity).supportFragmentManager
+        val manager = (LocalContext.current as AppCompatActivity).supportFragmentManager
 
         Column(
             modifier = Modifier

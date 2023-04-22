@@ -1,16 +1,11 @@
 package com.example.composemvvm.ui.screens.chat
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseStateViewModel
-import com.example.composemvvm.core.BaseViewModel
-import com.example.composemvvm.core.network.PaginationSource
 import com.example.composemvvm.core.network.Source
-import com.example.composemvvm.core.ui.BaseScreenState
-import com.example.composemvvm.logget
 import com.example.composemvvm.models.Message
+import com.example.composemvvm.models.MessageData
 import com.example.composemvvm.usecases.GetMessageListUseCase
 import com.example.composemvvm.usecases.SendMessageUseCase
 import kotlinx.coroutines.launch
@@ -23,33 +18,45 @@ class ChatViewModel(
 
     override val uiState = ChatScreenState()
 
-    var messagesState = createSourceMutableLiveData<PaginationSource<Message>>()
-        private set
-
-    var updatedMessageState = createSourceMutableLiveData<Message>()
-        private set
-
     private var page = 0
 
-    fun load() {
-        messagesState.value = Source.Processing()
+    init {
+        load()
+    }
+
+    private fun load() {
+        uiState.handleMessages(Source.Processing(), page)
         page = 0
         viewModelScope.launch {
-            messagesState.value = getMessageListUseCase(page)
+            uiState.handleMessages(getMessageListUseCase(page), page)
         }
     }
 
     fun loadMore() {
         page++
         viewModelScope.launch {
-            messagesState.value = getMessageListUseCase(page)
+            uiState.handleMessages(getMessageListUseCase(page), page)
         }
     }
 
     fun sendMessage(message: Message) {
         viewModelScope.launch {
-            updatedMessageState.value = sendMessageUseCase(message)
-//            updatedMessageState.value = Source.Error(Exception("Opss"))
+            uiState.handleUpdateMessage(sendMessageUseCase(message))
+//            uiState.handleUpdateMessage(Source.Error(Exception("Opss")))
+        }
+    }
+
+    fun sendMessage(messageData: MessageData) {
+        val message = Message(
+            data = messageData,
+            replayedMessage = uiState.replayMessage,
+            isSend = false,
+            isInput = false
+        )
+        uiState.addMessages(message)
+        viewModelScope.launch {
+            uiState.handleUpdateMessage(sendMessageUseCase(message))
+//            uiState.handleUpdateMessage(Source.Error(Exception("Opss")))
         }
     }
 }

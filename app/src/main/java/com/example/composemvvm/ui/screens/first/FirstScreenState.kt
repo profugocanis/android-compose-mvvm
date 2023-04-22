@@ -21,7 +21,6 @@ class FirstScreenState : BaseScreenState() {
                 products.clear()
                 products.addAll(productMock)
             }
-
             is Source.Success -> {
                 scroll.isScrollEnable.value = true
                 if (page == 0) {
@@ -30,9 +29,7 @@ class FirstScreenState : BaseScreenState() {
                 products.addAll(source.data ?: listOf())
                 scroll.isLastPage.value = page >= 2
                 scroll.refreshing.isRefreshing = false
-
             }
-
             is Source.Error -> context?.showInfoDialog(source.getErrorMessage())
         }
     }

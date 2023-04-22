@@ -26,26 +26,26 @@ import com.example.composemvvm.extentions.CustomBlue
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.extentions.isRtl
 import com.example.composemvvm.extentions.onBounceClick
+import com.example.composemvvm.models.MessageData
 import com.example.composemvvm.ui.activities.MainActivity
-import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.chat.ChatScreenState
-import com.example.composemvvm.ui.screens.chat.ChatViewModel
 import com.example.composemvvm.utils.KeyboardManager
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun InputView(
-    viewModel: ChatViewModel,
     screenState: ChatScreenState,
-    modifier: Modifier
+    modifier: Modifier,
+    onSend: (MessageData) -> Unit
 ) {
     val text = remember { mutableStateOf(TextFieldValue("")) }
+
     Column(modifier = modifier.fillMaxWidth()) {
 
         Divider()
 
         AnimatedVisibility(
-            visible = screenState.replayMessage.value != null,
+            visible = screenState.replayMessage != null,
             enter = expandVertically(
                 spring(
                     stiffness = Spring.StiffnessLow,
@@ -55,10 +55,10 @@ fun InputView(
             exit = shrinkVertically(),
         ) {
             ReplayMessageInputView(
-                screenState.replayMessage.value,
+                screenState.replayMessage,
                 modifier = Modifier.fillMaxWidth(),
                 onClear = {
-                    screenState.replayMessage.value = null
+                    screenState.replayMessage = null
                 })
         }
 
@@ -77,19 +77,23 @@ fun InputView(
                     modifier = Modifier
                         .scale(scaleX = if (LocalContext.current.isRtl) -1f else 1f, scaleY = 1f)
                         .onBounceClick {
-                            ChatScreen.sendMessage(text.value.text.trim(), screenState, viewModel)
+                            val messageText = text.value.text.trim()
+                            if (messageText.isEmpty()) return@onBounceClick
+                            val messageData = MessageData.Text(messageText)
+                            onSend(messageData)
                             text.value = TextFieldValue("")
                         })
             },
             leadingIcon = {
-                val activity = ChatScreen.getActivity() as? MainActivity
+                val activity = LocalContext.current as? MainActivity
                 Icon(painter = painterResource(id = R.drawable.ic_image),
                     contentDescription = null,
                     modifier = Modifier
                         .onBounceClick {
                             KeyboardManager.hideKeyBoard(activity)
-                            activity?.imageHelper?.select {
-                                ChatScreen.sendImage(it, screenState, viewModel)
+                            activity?.imageHelper?.select { bitmap ->
+                                val messageData = MessageData.Image(bitmap = bitmap)
+                                onSend(messageData)
                             }
                         })
             },

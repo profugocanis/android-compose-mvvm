@@ -1,21 +1,13 @@
 package com.example.composemvvm.core.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 
 abstract class ComposableUtils {
-
-    @Composable
-    fun getContext() = LocalContext.current
-
-    @Composable
-    fun getActivity() = LocalContext.current as AppCompatActivity
 
     @Composable
     fun onCreate(callback: (LifecycleOwner) -> Unit): Boolean {
