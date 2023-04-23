@@ -1,14 +1,9 @@
-package com.example.composemvvm.ui.screens.first
+package com.example.composemvvm.ui.screens.productlist
 
 import android.app.Application
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseStateViewModel
-import com.example.composemvvm.core.BaseViewModel
 import com.example.composemvvm.core.network.Source
-import com.example.composemvvm.core.ui.BaseScreenState
 import com.example.composemvvm.usecases.GetProductsUseCase
 import kotlinx.coroutines.launch
 

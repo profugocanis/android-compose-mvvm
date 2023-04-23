@@ -17,10 +17,10 @@ import com.example.composemvvm.R
 import com.example.composemvvm.core.LanguageHelper
 import com.example.composemvvm.core.image.ImageHelper
 import com.example.composemvvm.ui.screens.chat.ChatScreen
-import com.example.composemvvm.ui.screens.first.FirstPageScreen
+import com.example.composemvvm.ui.screens.productlist.FirstPageScreen
 import com.example.composemvvm.ui.screens.fourth.FourthScreen
-import com.example.composemvvm.ui.screens.second.SecondScreen
-import com.example.composemvvm.ui.screens.third.ThirdScreen
+import com.example.composemvvm.ui.screens.product.SecondScreen
+import com.example.composemvvm.ui.screens.main.MainScreen
 import com.example.composemvvm.ui.views.ToolBarView
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -28,7 +28,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @ExperimentalAnimationApi
 class MainActivity : AppCompatActivity() {
 
-    private val startDestination = ThirdScreen.ROUTE
+    private val startDestination = MainScreen.ROUTE
 
     val imageHelper: ImageHelper = ImageHelper(this)
 
@@ -63,9 +63,9 @@ class MainActivity : AppCompatActivity() {
                 SecondScreen.Screen(nav, it)
             }
 
-            ThirdScreen.createComposable(this@MainActivity, this) {
+            MainScreen.createComposable(this@MainActivity, this) {
                 onTitle("Compose Example")
-                ThirdScreen.Screen(nav)
+                MainScreen.Screen(nav)
             }
 
             ChatScreen.createComposable(this@MainActivity, this) {

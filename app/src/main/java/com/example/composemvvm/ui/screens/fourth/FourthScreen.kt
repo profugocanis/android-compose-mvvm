@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
-import com.example.composemvvm.ui.screens.second.SecondScreen
+import com.example.composemvvm.ui.screens.product.SecondScreen
 import org.koin.androidx.compose.koinViewModel
 
 object FourthScreen : BaseScreen() {

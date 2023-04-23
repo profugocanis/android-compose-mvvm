@@ -1,5 +1,7 @@
 package com.example.composemvvm.ui.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +39,14 @@ class MoviesActivity : AppCompatActivity() {
             MovieDetailScreen.createComposable(this@MoviesActivity, this) {
                 MovieDetailScreen.Screen(it)
             }
+        }
+    }
+
+    companion object {
+
+        fun open(context: Context) {
+            val intent = Intent(context, MoviesActivity::class.java)
+            context.startActivity(intent)
         }
     }
 }

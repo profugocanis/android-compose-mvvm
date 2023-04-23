@@ -1,5 +1,7 @@
 package com.example.composemvvm.ui.screens.moviessearch
 
+import android.app.Activity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.composemvvm.core.ui.BaseScreen
@@ -44,9 +48,16 @@ object MoviesSearchScreen : BaseScreen() {
         viewModel: MoviesSearchViewModel,
         screenState: MoviesSearchScreenState
     ) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        val activity = LocalContext.current as Activity
+        Box(
+            contentAlignment = Alignment.Center, modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                HeaderView("OMDd search")
+                HeaderView("OMDd search", onBack = {
+                    activity.finish()
+                })
                 SearchTextField(screenState)
                 SearchResultList(nav, viewModel, screenState)
             }

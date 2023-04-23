@@ -1,11 +1,18 @@
-package com.example.composemvvm.ui.screens.third
+package com.example.composemvvm.ui.screens.main
 
 import android.app.Activity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -30,12 +37,13 @@ import com.example.composemvvm.extentions.Background
 import com.example.composemvvm.extentions.CustomLightGray
 import com.example.composemvvm.logget
 import com.example.composemvvm.ui.activities.MainActivity
+import com.example.composemvvm.ui.activities.MoviesActivity
 import com.example.composemvvm.ui.screens.chat.ChatScreen
-import com.example.composemvvm.ui.screens.first.FirstPageScreen
 import com.example.composemvvm.ui.screens.fourth.FourthScreen
-import java.util.*
+import com.example.composemvvm.ui.screens.productlist.FirstPageScreen
+import java.util.Locale
 
-object ThirdScreen : BaseScreen() {
+object MainScreen : BaseScreen() {
 
     fun open(nav: NavController) {
         navigate(nav)
@@ -101,6 +109,15 @@ object ThirdScreen : BaseScreen() {
                         "Fourth Screen"
                     ) {
                         FourthScreen.open(nav)
+                    }
+
+                    val context = LocalContext.current
+                    GradientButton(
+                        listOf(Color(0xFF6285EC), Color(0xFF3361EA)),
+                        16.dp,
+                        "Movies search"
+                    ) {
+                        MoviesActivity.open(context)
                     }
 
                     Spacer(modifier = Modifier.fillMaxHeight(0.8f))

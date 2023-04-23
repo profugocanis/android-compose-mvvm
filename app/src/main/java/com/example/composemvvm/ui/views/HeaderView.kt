@@ -27,7 +27,7 @@ fun HeaderView(title: String, onBack: (() -> Unit)? = null) {
         })
 
         if (onBack != null) {
-            Text(text = "back", modifier = Modifier
+            Text(text = "<Back", modifier = Modifier
                 .constrainAs(backView) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)

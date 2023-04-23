@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.second
+package com.example.composemvvm.ui.screens.product
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background

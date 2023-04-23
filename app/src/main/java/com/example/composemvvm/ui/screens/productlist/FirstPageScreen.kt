@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.first
+package com.example.composemvvm.ui.screens.productlist
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

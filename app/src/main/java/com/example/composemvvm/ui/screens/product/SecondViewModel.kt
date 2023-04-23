@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.second
+package com.example.composemvvm.ui.screens.product
 
 import android.app.Application
 import com.example.composemvvm.core.BaseViewModel

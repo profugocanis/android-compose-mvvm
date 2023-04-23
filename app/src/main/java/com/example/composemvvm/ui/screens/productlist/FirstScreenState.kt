@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.first
+package com.example.composemvvm.ui.screens.productlist
 
 import androidx.compose.runtime.mutableStateListOf
 import com.example.composemvvm.core.network.Source

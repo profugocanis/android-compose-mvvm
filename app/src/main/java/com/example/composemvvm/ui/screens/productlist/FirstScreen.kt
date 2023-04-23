@@ -1,4 +1,4 @@
-package com.example.composemvvm.ui.screens.first
+package com.example.composemvvm.ui.screens.productlist
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -21,7 +21,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.onBounceClick
-import com.example.composemvvm.ui.screens.second.SecondScreen
+import com.example.composemvvm.ui.screens.product.SecondScreen
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
