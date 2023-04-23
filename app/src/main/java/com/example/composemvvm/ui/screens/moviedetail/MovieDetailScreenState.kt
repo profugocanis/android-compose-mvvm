@@ -8,11 +8,13 @@ import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreenState
 import com.example.composemvvm.extentions.showInfoDialog
 import com.example.composemvvm.models.movies.Movie
+import com.example.composemvvm.utils.ScrollHelper
 
 class MovieDetailScreenState : BaseScreenState() {
 
     var movie by mutableStateOf<Movie?>(null)
     var isLoading by mutableStateOf(false)
+    val scroll = ScrollHelper()
 
     fun handleMovie(source: Source<Movie>) {
         when (source) {

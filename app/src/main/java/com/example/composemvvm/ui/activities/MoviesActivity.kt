@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import com.example.composemvvm.ui.screens.moviedetail.MovieDetailScreen
@@ -17,15 +16,13 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @OptIn(ExperimentalAnimationApi::class)
 class MoviesActivity : AppCompatActivity() {
 
-    private val startDestination = MoviesSearchScreen.ROUTE
+    private val startDestination = MoviesSearchScreen.route
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Column {
-                val nav = rememberAnimatedNavController()
-                Navigation(nav)
-            }
+            val nav = rememberAnimatedNavController()
+            Navigation(nav)
         }
     }
 

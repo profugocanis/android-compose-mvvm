@@ -21,19 +21,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.composemvvm.extentions.Background
 import com.example.composemvvm.models.movies.Movie
 
 @Composable
 fun MovieView(movie: Movie, modifier: Modifier) {
     val viewWidth = (LocalConfiguration.current.screenWidthDp).dp / 2
-    val viewHeight = viewWidth + 64.dp
+    val viewHeight = viewWidth + 86.dp
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = modifier
             .padding(2.dp)
             .width(viewWidth)
             .height(viewHeight)
-            .clip(RoundedCornerShape(4.dp))
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.Background)
     ) {
 
         AsyncImage(

@@ -3,19 +3,35 @@ package com.example.composemvvm.extentions
 import androidx.navigation.NavBackStackEntry
 import com.google.gson.Gson
 
-inline fun <reified T> NavBackStackEntry.getObject(key: String): T {
+inline fun <reified T> NavBackStackEntry.getObject(key: String): T? {
     val json = arguments?.getString(key)
-    return Gson().fromJson(json, T::class.java)
+    return try {
+        Gson().fromJson(json, T::class.java)
+    } catch (_: Exception) {
+        null
+    }
 }
 
 fun NavBackStackEntry.getInt(key: String): Int? {
-    return arguments?.getString(key)?.toInt()
+    return try {
+        arguments?.getString(key)?.toInt()
+    } catch (_: Exception) {
+        null
+    }
 }
 
 fun NavBackStackEntry.getString(key: String): String? {
-    return arguments?.getString(key)
+    return try {
+        arguments?.getString(key)
+    } catch (_: Exception) {
+        null
+    }
 }
 
 fun NavBackStackEntry.getLong(key: String): Long? {
-    return arguments?.getString(key)?.toLong()
+    return try {
+        arguments?.getString(key)?.toLong()
+    } catch (_: Exception) {
+        null
+    }
 }

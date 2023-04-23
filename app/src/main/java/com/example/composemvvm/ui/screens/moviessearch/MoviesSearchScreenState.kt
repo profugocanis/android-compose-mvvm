@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class MoviesSearchScreenState : BaseScreenState() {
 
+    var selectedMovie: Movie? by mutableStateOf(null)
     val movies = mutableStateListOf<Movie>()
     var searchText = MutableStateFlow("")
     var isLoading by mutableStateOf(false)

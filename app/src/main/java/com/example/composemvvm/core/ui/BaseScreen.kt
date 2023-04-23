@@ -13,16 +13,16 @@ import com.example.composemvvm.core.NavigationArguments
 import com.example.composemvvm.extentions.isRtl
 import com.google.accompanist.navigation.animation.composable
 
-abstract class BaseScreen : ComposableUtils() {
+abstract class BaseScreen : LifeCircleScreen() {
 
     open val arguments: NavigationArguments = NavigationArguments()
 
-    private val CLEAR_ROUTE = this::class.simpleName.toString()
-    val ROUTE: String get() = "$CLEAR_ROUTE?${arguments.getBaseUrl()}"
+    private val className = this::class.simpleName.toString()
+    val route: String get() = "$className?${arguments.getBaseUrl()}"
 
     protected fun navigate(nav: NavController, args: Map<String, Any> = mapOf()) {
         val parameters = arguments.createParameters(args)
-        nav.navigate("$CLEAR_ROUTE?$parameters")
+        nav.navigate("$className?$parameters")
     }
 
     @OptIn(ExperimentalAnimationApi::class)
@@ -40,7 +40,7 @@ abstract class BaseScreen : ComposableUtils() {
         val rightDirection =
             if (isRtl) AnimatedContentTransitionScope.SlideDirection.Left else AnimatedContentTransitionScope.SlideDirection.Right
         return builder.composable(
-            ROUTE,
+            route,
             arguments = arguments.getNavigationArguments(),
             enterTransition = {
                 slideIntoContainer(leftDirection, animationSpec = tween(duration))

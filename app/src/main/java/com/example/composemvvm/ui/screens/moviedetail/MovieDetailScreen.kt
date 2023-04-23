@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -37,13 +40,18 @@ object MovieDetailScreen : BaseScreen() {
     }
 
     @Composable
-    fun Screen(stackEntry: NavBackStackEntry?, viewModel: MovieDetailViewModel = koinViewModel()) {
-        val state: MovieDetailScreenState = viewModel.getState()
-        if (state.movie == null) {
-            state.movie = stackEntry?.getObject<Movie>(MOVIE_KEY)
+    fun Screen(stackEntry: NavBackStackEntry?) {
+        val movie = stackEntry?.getObject<Movie>(MOVIE_KEY)
+        if (movie != null) {
+            Screen(movie = movie)
         }
+    }
 
-        onCreate {
+    @Composable
+    fun Screen(movie: Movie, viewModel: MovieDetailViewModel = koinViewModel()) {
+        val state: MovieDetailScreenState = viewModel.getState()
+        if (state.movie?.imdbID != movie.imdbID) {
+            state.movie = movie
             viewModel.loadMovie(state.movie?.imdbID)
         }
 
@@ -55,6 +63,7 @@ object MovieDetailScreen : BaseScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .background(Color.White)
         ) {
 
@@ -69,7 +78,7 @@ object MovieDetailScreen : BaseScreen() {
                     .width(LocalConfiguration.current.screenWidthDp.dp)
             )
 
-            Text(text = screenState.movie?.title ?: "")
+            Text(text = screenState.movie?.title ?: "", fontSize = 24.sp)
             Text(text = screenState.movie?.plot ?: "")
         }
     }

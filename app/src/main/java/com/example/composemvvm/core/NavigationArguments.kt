@@ -25,6 +25,7 @@ class NavigationArguments {
             val name = it.name
             result += "$name={$name}&"
         }
+        result = result.removeSuffix("&")
         return result
     }
 
