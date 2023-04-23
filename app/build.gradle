@@ -22,6 +22,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            buildConfigField("String", "API_URL", "\"http://www.omdbapi.com/\"")
+            buildConfigField('String', 'API_KEY', "\"3c271b0\"")
+            minifyEnabled false
+            shrinkResources false
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -61,6 +68,12 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.0")
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
+    //Network
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.10.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
+
     // pager indicators
     implementation "com.google.accompanist:accompanist-pager-indicators:0.23.1"
 
@@ -69,9 +82,6 @@ dependencies {
 
     // images
     implementation "io.coil-kt:coil-compose:2.2.2"
-
-    // Blur
-//    implementation 'com.github.x3rocode:xblur-compose:1.0.1'
 
     // viewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"

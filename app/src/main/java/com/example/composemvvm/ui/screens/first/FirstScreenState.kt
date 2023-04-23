@@ -27,7 +27,7 @@ class FirstScreenState : BaseScreenState() {
                     products.clear()
                 }
                 products.addAll(source.data ?: listOf())
-                scroll.isLastPage.value = page >= 2
+                scroll.isLastPage = page >= 2
                 scroll.refreshing.isRefreshing = false
             }
             is Source.Error -> context?.showInfoDialog(source.getErrorMessage())

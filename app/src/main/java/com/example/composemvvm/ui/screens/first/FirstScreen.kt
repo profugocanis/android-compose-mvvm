@@ -48,7 +48,7 @@ object FirstScreen : BaseScreen() {
 
             ProductList(nav, viewModel, screenState)
 
-            AnimatedVisibility(visible = screenState.scroll.isShowFloating.value,
+            AnimatedVisibility(visible = screenState.scroll.isShowFloating,
                 enter = slideInVertically { 300 },
                 exit = slideOutVertically { 300 },
                 modifier = Modifier.constrainAs(floatingButton) {
@@ -99,7 +99,7 @@ object FirstScreen : BaseScreen() {
                 }
 
                 item {
-                    if (!screenState.scroll.isLastPage.value) {
+                    if (!screenState.scroll.isLastPage) {
                         onResume {
                             viewModel.loadMore()
                         }

@@ -1,6 +1,5 @@
 package com.example.composemvvm.usecases
 
-import com.example.composemvvm.core.BaseUseCase
 import com.example.composemvvm.core.network.PaginationSource
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.models.Message

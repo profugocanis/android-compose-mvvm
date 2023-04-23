@@ -1,6 +1,7 @@
 package com.example.composemvvm
 
 import android.app.Application
+import com.example.composemvvm.di.networkModule
 import com.example.composemvvm.di.useCasesModule
 import com.example.composemvvm.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
@@ -16,7 +17,7 @@ class App : Application() {
     private fun setupKoin() {
         startKoin {
             androidContext(this@App)
-            modules(viewModelModule, useCasesModule)
+            modules(viewModelModule, useCasesModule, networkModule)
         }
     }
 }

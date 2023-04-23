@@ -130,7 +130,7 @@ object ChatScreen : BaseScreen() {
     @Composable
     private fun ButtonScroll(screenState: ChatScreenState, modifier: Modifier) {
         AnimatedVisibility(
-            visible = screenState.scroll.isShowFloating.value,
+            visible = screenState.scroll.isShowFloating,
             enter = scaleIn(animationSpec = tween(200)),
             exit = scaleOut(animationSpec = tween(200)),
             modifier = modifier

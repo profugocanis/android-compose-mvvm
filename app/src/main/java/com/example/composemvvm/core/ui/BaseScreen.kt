@@ -20,7 +20,7 @@ abstract class BaseScreen : ComposableUtils() {
     private val CLEAR_ROUTE = this::class.simpleName.toString()
     val ROUTE: String get() = "$CLEAR_ROUTE?${arguments.getBaseUrl()}"
 
-    fun navigate(nav: NavController, args: Map<String, Any> = mapOf()) {
+    protected fun navigate(nav: NavController, args: Map<String, Any> = mapOf()) {
         val parameters = arguments.createParameters(args)
         nav.navigate("$CLEAR_ROUTE?$parameters")
     }
