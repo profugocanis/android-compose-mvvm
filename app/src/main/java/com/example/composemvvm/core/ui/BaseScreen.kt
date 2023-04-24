@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -13,7 +14,7 @@ import com.example.composemvvm.core.NavigationArguments
 import com.example.composemvvm.extentions.isRtl
 import com.google.accompanist.navigation.animation.composable
 
-abstract class BaseScreen : LifeCircleScreen() {
+abstract class BaseScreen : LifecycleScreen() {
 
     open val arguments: NavigationArguments = NavigationArguments()
 

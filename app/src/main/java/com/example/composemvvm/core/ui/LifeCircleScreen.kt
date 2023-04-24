@@ -7,7 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 
-abstract class LifeCircleScreen {
+abstract class LifecycleScreen {
 
     @Composable
     fun onCreate(callback: (LifecycleOwner) -> Unit): Boolean {

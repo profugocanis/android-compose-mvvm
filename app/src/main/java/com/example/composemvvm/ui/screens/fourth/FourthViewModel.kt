@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseStateViewModel
 import com.example.composemvvm.core.network.Source
+import com.example.composemvvm.logget
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -12,6 +13,11 @@ class FourthViewModel(
 ) : BaseStateViewModel(application) {
 
     override val uiState = FourthScreenState()
+
+    fun changeText(text: String) {
+        val newText = text + "changed"
+        uiState.handleNewText(newText)
+    }
 
     fun start() {
         viewModelScope.launch {
@@ -24,5 +30,10 @@ class FourthViewModel(
 //                }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        logget("FourthViewModel onCleared")
     }
 }

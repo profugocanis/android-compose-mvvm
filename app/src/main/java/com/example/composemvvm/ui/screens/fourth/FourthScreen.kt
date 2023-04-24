@@ -22,8 +22,8 @@ object FourthScreen : BaseScreen() {
     }
 
     @Composable
-    fun Screen(nav: NavController, viewModel: FourthViewModel = koinViewModel()) {
-
+    fun Screen(nav: NavController) {
+        val viewModel: FourthViewModel = koinViewModel()
         val screenState: FourthScreenState = viewModel.getState()
 
         onCreate {
@@ -39,11 +39,15 @@ object FourthScreen : BaseScreen() {
             logget("onDestroy")
         }
 
-        Content(nav, screenState)
+        Content(nav, viewModel, screenState)
     }
 
     @Composable
-    private fun Content(nav: NavController, screenState: FourthScreenState) {
+    private fun Content(
+        nav: NavController,
+        viewModel: FourthViewModel,
+        screenState: FourthScreenState
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
