@@ -5,7 +5,7 @@ import com.example.composemvvm.ui.screens.productlist.FirstViewModel
 import com.example.composemvvm.ui.screens.fourth.FourthViewModel
 import com.example.composemvvm.ui.screens.moviedetail.MovieDetailViewModel
 import com.example.composemvvm.ui.screens.moviessearch.MoviesSearchViewModel
-import com.example.composemvvm.ui.screens.product.SecondViewModel
+import com.example.composemvvm.ui.screens.product.ProductViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -19,7 +19,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        SecondViewModel(
+        ProductViewModel(
             application = get(),
         )
     }

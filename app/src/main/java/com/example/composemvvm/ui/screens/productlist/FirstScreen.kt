@@ -1,5 +1,6 @@
 package com.example.composemvvm.ui.screens.productlist
 
+import android.widget.TextView
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -17,11 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.onBounceClick
-import com.example.composemvvm.ui.screens.product.SecondScreen
+import com.example.composemvvm.logget
+import com.example.composemvvm.ui.screens.product.ProductScreen
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -94,7 +97,7 @@ object FirstScreen : BaseScreen() {
                             .fillParentMaxWidth()
                             .padding(PaddingValues(vertical = 8.dp, horizontal = 8.dp))
                             .onBounceClick {
-                                SecondScreen.open(nav, it)
+                                ProductScreen.open(nav, it)
                             })
                 }
 

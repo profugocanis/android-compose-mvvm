@@ -39,9 +39,7 @@ import com.example.composemvvm.models.movies.Movie
 import com.example.composemvvm.ui.screens.moviedetail.MovieDetailScreen
 import com.example.composemvvm.ui.screens.moviessearch.views.MovieView
 import com.example.composemvvm.ui.views.HeaderView
-import com.mxalbert.sharedelements.DelayExit
 import com.mxalbert.sharedelements.FadeMode
-import com.mxalbert.sharedelements.LocalSharedElementsRootScope
 import com.mxalbert.sharedelements.MaterialContainerTransformSpec
 import com.mxalbert.sharedelements.SharedElementsRoot
 import com.mxalbert.sharedelements.SharedMaterialContainer
@@ -69,9 +67,7 @@ object MoviesSearchScreen : BaseScreen() {
                     isFullscreen = true,
                     transitionSpec = FadeOutTransitionSpec
                 ) {
-                    Column() {
-                        MovieDetailScreen.Screen(movie)
-                    }
+                    MovieDetailScreen.Screen(movie)
                 }
             }
         }
@@ -149,7 +145,8 @@ object MoviesSearchScreen : BaseScreen() {
         val viewWidth = (LocalConfiguration.current.screenWidthDp).dp / 2
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = viewWidth),
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier
+                .padding(top = 8.dp)
         ) {
 
             items(screenState.movies, key = { it.imdbID ?: "" }) {
@@ -182,11 +179,12 @@ object MoviesSearchScreen : BaseScreen() {
 
     @Composable
     private fun GetSharedMovieView(movie: Movie, screenState: MoviesSearchScreenState) {
-        LocalSharedElementsRootScope.current?.DelayExit(screenState.selectedMovie?.imdbID != movie.imdbID) {
+        if (screenState.selectedMovie?.imdbID != movie.imdbID) {
             SharedMaterialContainer(
                 key = movie.imdbID ?: "",
                 screenKey = "MovieView",
-                transitionSpec = FadeOutTransitionSpec
+                transitionSpec = FadeOutTransitionSpec,
+                color = Color.CustomLightGray
             ) {
                 MovieView(movie, modifier = Modifier.onBounceClick {
                     screenState.selectedMovie = movie

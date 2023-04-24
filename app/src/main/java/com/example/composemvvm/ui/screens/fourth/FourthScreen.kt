@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.logget
 import com.example.composemvvm.models.Product
-import com.example.composemvvm.ui.screens.product.SecondScreen
+import com.example.composemvvm.ui.screens.product.ProductScreen
 import org.koin.androidx.compose.koinViewModel
 
 object FourthScreen : BaseScreen() {
@@ -52,7 +52,7 @@ object FourthScreen : BaseScreen() {
             Text(text = "FourthScreen ${screenState.valueState}")
 
             Button(onClick = {
-                SecondScreen.open(nav, Product())
+                ProductScreen.open(nav, Product())
             }) {
                 Text(text = "Product")
             }

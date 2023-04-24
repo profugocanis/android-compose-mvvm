@@ -18,22 +18,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.composemvvm.extentions.Background
 import com.example.composemvvm.models.movies.Movie
 
+fun getHeightByWidth(width: Dp): Dp {
+    return width.times(1.4.toFloat())
+}
+
 @Composable
 fun MovieView(movie: Movie, modifier: Modifier) {
     val viewWidth = (LocalConfiguration.current.screenWidthDp).dp / 2
-    val viewHeight = viewWidth + 86.dp
+//    val viewHeight = viewWidth + 86.dp
+    val viewHeight = getHeightByWidth(viewWidth)
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = modifier
             .padding(2.dp)
-            .width(viewWidth)
             .height(viewHeight)
+            .width(viewWidth)
             .clip(RoundedCornerShape(8.dp))
             .background(Color.Background)
     ) {
@@ -43,14 +49,12 @@ fun MovieView(movie: Movie, modifier: Modifier) {
                 .data(movie.poster)
                 .crossfade(true)
                 .build(),
-            onState = {
-//                isVisible.value = it is AsyncImagePainter.State.Success
-            },
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .widthIn(max = (LocalConfiguration.current.screenWidthDp).dp - 32.dp)
                 .height(viewHeight)
+                .width(viewWidth)
         )
 
         Column(

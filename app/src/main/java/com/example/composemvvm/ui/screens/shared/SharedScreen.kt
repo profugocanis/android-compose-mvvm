@@ -1,6 +1,5 @@
 package com.example.composemvvm.ui.screens.shared
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -10,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -18,13 +16,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.onBounceClick
-import com.example.composemvvm.models.movies.Movie
-import com.example.composemvvm.ui.screens.moviedetail.MovieDetailScreen
 import com.mxalbert.sharedelements.FadeMode
 import com.mxalbert.sharedelements.MaterialContainerTransformSpec
-import com.mxalbert.sharedelements.ProgressThresholds
 import com.mxalbert.sharedelements.SharedElementsRoot
-import com.mxalbert.sharedelements.SharedElementsTransitionSpec
 import com.mxalbert.sharedelements.SharedMaterialContainer
 
 const val url =
@@ -59,7 +53,7 @@ object SharedScreen : BaseScreen() {
                         isFullscreen = true,
                         transitionSpec = FadeOutTransitionSpec
                     ) {
-                        MovieDetailScreen.Screen(Movie(title = "Title", poster = url))
+                        Image(300)
                     }
                 }
             }
@@ -76,8 +70,6 @@ object SharedScreen : BaseScreen() {
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
-//                .widthIn(max = (LocalConfiguration.current.screenWidthDp).dp - 32.dp)
-//                .fillMaxWidth()
                 .width(sizeDp.dp)
         )
     }

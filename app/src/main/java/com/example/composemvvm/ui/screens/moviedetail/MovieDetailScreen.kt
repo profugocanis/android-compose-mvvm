@@ -3,6 +3,7 @@ package com.example.composemvvm.ui.screens.moviedetail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,6 +24,7 @@ import com.example.composemvvm.core.NavigationArguments
 import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.getObject
 import com.example.composemvvm.models.movies.Movie
+import com.example.composemvvm.ui.screens.moviessearch.views.getHeightByWidth
 import org.koin.androidx.compose.koinViewModel
 
 object MovieDetailScreen : BaseScreen() {
@@ -76,6 +78,7 @@ object MovieDetailScreen : BaseScreen() {
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .width(LocalConfiguration.current.screenWidthDp.dp)
+                    .height(getHeightByWidth(LocalConfiguration.current.screenWidthDp.dp))
             )
 
             Text(text = screenState.movie?.title ?: "", fontSize = 24.sp)

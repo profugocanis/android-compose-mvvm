@@ -12,13 +12,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ImageHelper(activity: AppCompatActivity) {
+class ImageHelper(activity: AppCompatActivity?) {
 
     private var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>? = null
     private var onSelected: ((Bitmap?) -> Unit)? = null
 
     init {
-        pickMedia = activity.registerForActivityResult(PickVisualMedia()) { uri ->
+        pickMedia = activity?.registerForActivityResult(PickVisualMedia()) { uri ->
             if (uri != null) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val bitmap = toBitmap(uri, activity)

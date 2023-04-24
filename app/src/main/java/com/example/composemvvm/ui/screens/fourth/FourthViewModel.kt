@@ -18,10 +18,10 @@ class FourthViewModel(
             (1..100).forEach {
                 delay(1_000)
                 uiState.handleTestValue(Source.Success(it))
-                if (it == 3) {
-                    val error = Source.Error(Exception("Opps, something went wrong"))
-                    uiState.handleTestValue(error)
-                }
+//                if (it == 3) {
+//                    val error = Source.Error(Exception("Opps, something went wrong"))
+//                    uiState.handleTestValue(error)
+//                }
             }
         }
     }

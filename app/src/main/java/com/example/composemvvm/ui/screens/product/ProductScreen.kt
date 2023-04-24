@@ -22,7 +22,7 @@ import com.example.composemvvm.models.Product
 import com.example.composemvvm.ui.dialogs.ProductBottomDialog
 import org.koin.androidx.compose.koinViewModel
 
-object SecondScreen : BaseScreen() {
+object ProductScreen : BaseScreen() {
 
     private const val PRODUCT_KEY = "PRODUCT_KEY"
     private const val PRODUCT_NAME_KEY = "PRODUCT_NAME_KEY"
@@ -43,7 +43,7 @@ object SecondScreen : BaseScreen() {
     fun Screen(
         nav: NavController,
         stackEntry: NavBackStackEntry?,
-        viewModel: SecondViewModel = koinViewModel()
+        viewModel: ProductViewModel = koinViewModel()
     ) {
 
         val value = rememberSaveable() { mutableStateOf(0) }
