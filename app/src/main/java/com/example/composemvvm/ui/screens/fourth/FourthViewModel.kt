@@ -14,11 +14,6 @@ class FourthViewModel(
 
     override val uiState = FourthScreenState()
 
-    fun changeText(text: String) {
-        val newText = text + "changed"
-        uiState.handleNewText(newText)
-    }
-
     fun start() {
         viewModelScope.launch {
             (1..100).forEach {

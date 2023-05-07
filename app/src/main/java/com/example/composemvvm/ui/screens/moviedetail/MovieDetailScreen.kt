@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -25,6 +26,7 @@ import com.example.composemvvm.core.ui.BaseScreen
 import com.example.composemvvm.extentions.getObject
 import com.example.composemvvm.models.movies.Movie
 import com.example.composemvvm.ui.screens.moviessearch.views.getHeightByWidth
+import com.example.composemvvm.utils.AnimationUtils
 import org.koin.androidx.compose.koinViewModel
 
 object MovieDetailScreen : BaseScreen() {
@@ -82,7 +84,9 @@ object MovieDetailScreen : BaseScreen() {
             )
 
             Text(text = screenState.movie?.title ?: "", fontSize = 24.sp)
-            Text(text = screenState.movie?.plot ?: "")
+
+            val alphaAnim = AnimationUtils.alpha { screenState.movie?.plot != null }
+            Text(text = screenState.movie?.plot ?: "", Modifier.alpha(alphaAnim.value))
         }
     }
 }

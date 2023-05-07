@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseStateViewModel
 import com.example.composemvvm.usecases.GetMovieUseCase
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MovieDetailViewModel(

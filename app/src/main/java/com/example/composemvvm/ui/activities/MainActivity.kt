@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -17,7 +16,6 @@ import androidx.navigation.NavHostController
 import com.example.composemvvm.R
 import com.example.composemvvm.core.LanguageHelper
 import com.example.composemvvm.core.image.ImageHelper
-import com.example.composemvvm.logget
 import com.example.composemvvm.ui.screens.chat.ChatScreen
 import com.example.composemvvm.ui.screens.fourth.FourthScreen
 import com.example.composemvvm.ui.screens.main.MainScreen
@@ -29,11 +27,11 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @ExperimentalAnimationApi
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val startDestination = MainScreen.route
 
-    val imageHelper: ImageHelper = ImageHelper(this as? AppCompatActivity)
+    val imageHelper: ImageHelper = ImageHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +76,7 @@ class MainActivity : ComponentActivity() {
 
             FourthScreen.createComposable(this@MainActivity, this) {
                 onTitle("FourthScreen")
-                FourthScreen.Screen(nav)
+                FourthScreen.Screen()
             }
 
             SharedScreen.createComposable(this@MainActivity, this) {

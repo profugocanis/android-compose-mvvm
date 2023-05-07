@@ -9,14 +9,14 @@ import com.example.composemvvm.extentions.showInfoDialog
 
 class FourthScreenState : BaseScreenState() {
 
-    var valueState by mutableStateOf(0)
+    var value by mutableStateOf(0)
         private set
 
     fun handleTestValue(source: Source<Int>) {
         when (source) {
             is Source.Processing -> Unit
             is Source.Success -> {
-                valueState = source.data ?: 0
+                value = source.data ?: 0
             }
 
             is Source.Error -> {
