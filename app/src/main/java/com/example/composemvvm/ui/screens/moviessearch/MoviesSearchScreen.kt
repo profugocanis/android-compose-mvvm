@@ -52,7 +52,6 @@ object MoviesSearchScreen : BaseScreen() {
     fun Screen(nav: NavController, viewModel: MoviesSearchViewModel = koinViewModel()) {
         val screenState: MoviesSearchScreenState = viewModel.getState()
         onCreate {
-            CustomToast.showError(screenState.context, "There are five distinct icon themes: Filled, Outlined, Rounded, TwoTone, and Sharp. Each theme contains the same icons, but with a distinct visual style. You should typically choose one theme and use it across your application for consistency. For example, you may want to use")
             screenState.searchText.value = "one"
         }
         BackHandler(enabled = screenState.selectedMovie != null) {

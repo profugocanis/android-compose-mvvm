@@ -6,9 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.core.ui.BaseScreenState
-import com.example.composemvvm.extentions.showInfoDialog
 import com.example.composemvvm.models.movies.Movie
 import com.example.composemvvm.network.responses.MoviesSearchResponse
+import com.example.composemvvm.utils.CustomToast
 import com.example.composemvvm.utils.ScrollHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -36,7 +36,7 @@ class MoviesSearchScreenState : BaseScreenState() {
 
             is Source.Error -> {
                 isLoading = false
-                context?.showInfoDialog(source.getErrorMessage())
+                CustomToast.showError(context, source.getErrorMessage())
             }
         }
     }

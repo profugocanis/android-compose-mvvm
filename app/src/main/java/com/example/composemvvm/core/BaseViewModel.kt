@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.network.NetworkMonitor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,6 +21,7 @@ abstract class BaseViewModel(application: Application) : AndroidViewModel(applic
 
     protected fun launchWithSafeNetwork(block: suspend CoroutineScope.() -> Unit) {
         networkMonitor.execute {
+            if (!viewModelScope.isActive) return@execute
             viewModelScope.launch {
                 block()
             }
