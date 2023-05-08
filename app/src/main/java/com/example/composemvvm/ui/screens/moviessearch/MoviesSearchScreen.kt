@@ -39,6 +39,7 @@ import com.example.composemvvm.models.movies.Movie
 import com.example.composemvvm.ui.screens.moviedetail.MovieDetailScreen
 import com.example.composemvvm.ui.screens.moviessearch.views.MovieView
 import com.example.composemvvm.ui.views.HeaderView
+import com.example.composemvvm.utils.CustomToast
 import com.mxalbert.sharedelements.FadeMode
 import com.mxalbert.sharedelements.MaterialContainerTransformSpec
 import com.mxalbert.sharedelements.SharedElementsRoot
@@ -51,6 +52,7 @@ object MoviesSearchScreen : BaseScreen() {
     fun Screen(nav: NavController, viewModel: MoviesSearchViewModel = koinViewModel()) {
         val screenState: MoviesSearchScreenState = viewModel.getState()
         onCreate {
+            CustomToast.showError(screenState.context, "There are five distinct icon themes: Filled, Outlined, Rounded, TwoTone, and Sharp. Each theme contains the same icons, but with a distinct visual style. You should typically choose one theme and use it across your application for consistency. For example, you may want to use")
             screenState.searchText.value = "one"
         }
         BackHandler(enabled = screenState.selectedMovie != null) {

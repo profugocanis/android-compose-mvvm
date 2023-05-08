@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 
 abstract class BaseScreenState {
 
-    protected var context: Context? = null
+    var context: Context? = null
         private set
 
     @Composable

@@ -1,7 +1,6 @@
 package com.example.composemvvm.ui.screens.moviessearch
 
 import android.app.Application
-import androidx.lifecycle.viewModelScope
 import com.example.composemvvm.core.BaseStateViewModel
 import com.example.composemvvm.core.network.Source
 import com.example.composemvvm.usecases.SearchMovieUseCase
@@ -50,7 +49,7 @@ class MoviesSearchViewModel(
     }
 
     private fun loadSearch() {
-        viewModelScope.launch {
+        launchWithSafeNetwork {
             val source = searchMovieUseCase(lastSearchText, page)
             uiState.handleSearchMovies(source, page)
         }

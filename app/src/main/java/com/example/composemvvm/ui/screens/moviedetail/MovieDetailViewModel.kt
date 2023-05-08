@@ -15,7 +15,7 @@ class MovieDetailViewModel(
 
     fun loadMovie(imdbID: String?) {
         imdbID ?: return
-        viewModelScope.launch {
+        launchWithSafeNetwork {
             uiState.handleMovie(getMovieUseCase(imdbID))
         }
     }

@@ -1,30 +1,28 @@
 package com.example.composemvvm.core
 
 import android.app.Application
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.composemvvm.core.network.Source
+import com.example.composemvvm.core.network.NetworkMonitor
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
-    fun <T : Any> createSourceMutableState(): MutableState<Source<T>> {
-        return mutableStateOf(
-            Source.Processing(),
-            policy = neverEqualPolicy()
-        )
-    }
-
-    fun <T : Any> createSourceMutableLiveData(): MutableLiveData<Source<T>> {
-        return MutableLiveData()
-    }
+    private val networkMonitor = NetworkMonitor(application)
 
     override fun onCleared() {
         super.onCleared()
         viewModelScope.cancel()
+        networkMonitor.onCleared()
+    }
+
+    protected fun launchWithSafeNetwork(block: suspend CoroutineScope.() -> Unit) {
+        networkMonitor.execute {
+            viewModelScope.launch {
+                block()
+            }
+        }
     }
 }
