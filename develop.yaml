@@ -1,32 +1,38 @@
 variables:
   system.debug: 'false'
-  lastCommitMessage: Commit
+  lastCommitMessage: AppCenter build 2
   pr.check.id: ''
   pr.status.id: ''
   MOBILECENTER_OUTPUT_DIRECTORY: $(Build.ArtifactStagingDirectory)/build
   MOBILECENTER_BRANCH: develop
   MOBILECENTER_BUILD_ID: $(Build.BuildNumber)
   MOBILECENTER_SOURCE_DIRECTORY: $(Build.Repository.LocalPath)
-  MOBILECENTER_TRIGGER: continuous
+  MOBILECENTER_TRIGGER: manual
   APPCENTER_OUTPUT_DIRECTORY: $(Build.ArtifactStagingDirectory)/build
   APPCENTER_BRANCH: develop
   APPCENTER_BUILD_ID: $(Build.BuildNumber)
   APPCENTER_SOURCE_DIRECTORY: $(Build.Repository.LocalPath)
-  APPCENTER_TRIGGER: continuous
+  APPCENTER_TRIGGER: manual
   buildScripts.toolset: '{}'
-  moduleName: app
-  buildVariant: debug
-  isRoot: 'false'
+  moduleName: android-compose-mvvm
+  buildVariant: release
+  isRoot: 'true'
   runTests: 'false'
   runLint: 'false'
+  keystorePassword: null
+  keyAlias: null
+  keyPassword: null
+  keystoreFilename: testkeysore.keystore
+  keystoreSecureFileId: 180f54fe-b2ce-4e42-bdac-d116161e32c4
+  keystoreSecureFilename: 9c8cb512-4b81-4915-87b3-e0695520200a
   keystoreEncoded: null
   automaticSigning: 'false'
   buildBundle: 'false'
-  MOBILECENTER_ANDROID_MODULE: app
-  MOBILECENTER_ANDROID_VARIANT: debug
-  APPCENTER_ANDROID_MODULE: app
-  APPCENTER_ANDROID_VARIANT: debug
-  sonoma.tags: 'continuous,android'
+  MOBILECENTER_ANDROID_MODULE: android-compose-mvvm
+  MOBILECENTER_ANDROID_VARIANT: release
+  APPCENTER_ANDROID_MODULE: android-compose-mvvm
+  APPCENTER_ANDROID_VARIANT: release
+  sonoma.tags: 'android,signed'
 name: $(BuildID)
 resources:
   repositories:
@@ -76,7 +82,16 @@ jobs:
       - task: Gradle@1
         displayName: Gradle Task
         inputs:
-          tasks: 'clean :app:assembleDebug '
+          tasks: 'clean assembleRelease '
+          options: >-
+            -DAPPCENTER_KEYSTORE_PASSWORD="$(keystorePassword)"
+            -DMOBILECENTER_KEYSTORE_PASSWORD="$(keystorePassword)"
+            -DAPPCENTER_KEYSTORE_FILE_ID="$(keystoreFilename)"
+            -DMOBILECENTER_KEYSTORE_FILE_ID="$(keystoreFilename)"
+            -DAPPCENTER_KEY_ALIAS="$(keyAlias)"
+            -DMOBILECENTER_KEY_ALIAS="$(keyAlias)"
+            -DAPPCENTER_KEY_PASSWORD="$(keyPassword)"
+            -DMOBILECENTER_KEY_PASSWORD="$(keyPassword)"
           jdkArchitecture: x86
           publishJUnitResults: false
           sqAnalysisBreakBuildIfQualityGateFailed: false
@@ -85,11 +100,20 @@ jobs:
         displayName: Android Postprocess
         inputs:
           scriptPath: $(Agent.HomeDirectory)/scripts/android-postprocess.sh
-          args: $(build.sourcesdirectory)/app/build/outputs/apk
+          args: $(build.sourcesdirectory)/build/outputs/apk
+      - task: AndroidSigning@3
+        displayName: Sign APK
+        inputs:
+          files: $(build.sourcesdirectory)/build/**/*.apk
+          keystoreFile: $(keystoreSecureFileId)
+          keystorePass: $(keystorePassword)
+          keystoreAlias: $(keyAlias)
+          keyPass: $(keyPassword)
+          apksignerArguments: '-verbose'
       - task: CopyFiles@2
         displayName: Copy build files to staging
         inputs:
-          SourceFolder: $(build.sourcesdirectory)/app/build/outputs
+          SourceFolder: $(build.sourcesdirectory)/build/outputs
           Contents: apk/**/*.apk
           TargetFolder: $(build.artifactstagingdirectory)/build
           OverWrite: true
@@ -97,7 +121,7 @@ jobs:
       - task: CopyFiles@2
         displayName: Copy mapping files to staging
         inputs:
-          SourceFolder: $(build.sourcesdirectory)/app/build/outputs
+          SourceFolder: $(build.sourcesdirectory)/build/outputs
           Contents: mapping/**/mapping.txt
           TargetFolder: $(build.artifactstagingdirectory)/mapping
           OverWrite: true
