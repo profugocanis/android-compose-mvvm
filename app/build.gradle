@@ -7,6 +7,18 @@ android {
     namespace 'com.example.composemvvm'
     compileSdk 33
 
+    signingConfigs {
+        ComposeSigning {
+            def keystorePropertiesFile = rootProject.file("local.properties")
+            def keystoreProperties = new Properties()
+            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+
     defaultConfig {
         applicationId "com.example.composemvvm"
         minSdk 24
@@ -19,8 +31,11 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "API_URL", "\"http://www.omdbapi.com/\"")
+            buildConfigField('String', 'API_KEY', "\"3c271b0\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.ComposeSigning
         }
 
         debug {
